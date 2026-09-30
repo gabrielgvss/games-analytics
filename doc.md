@@ -1,124 +1,190 @@
-# Game Sales Analytics — CRISP-DM
+# Game Sales Analytics
 
-## Análise dos fatores associados ao desempenho comercial de videogames
+## Análise de vendas de videogames com regressão linear
 
-**Objetivo:** analisar quais características dos jogos e indicadores de recepção estão associados ao desempenho comercial global, integrando Business Analytics e regressão linear dentro da metodologia CRISP-DM.
+Este projeto busca entender quais características dos jogos têm relação com suas vendas globais. A base contém informações como plataforma, gênero, ano de lançamento, notas da crítica e avaliações dos usuários.
 
-**Unidade de análise:** um jogo em determinada plataforma.  
-**Alvo:** `Global_Sales`, em milhões de unidades.  
-**Uso pretendido:** explicação e benchmarking pós-lançamento, não previsão absoluta de sucesso antes do lançamento.
+O trabalho segue as etapas do CRISP-DM: entender o problema, conhecer os dados, preparar a base, criar os modelos e avaliar os resultados.
 
-## 1. Business Understanding
+**Unidade analisada:** um jogo em uma plataforma.  
+**Variável que queremos estimar:** Global_Sales, em milhões de unidades.  
+**Objetivo:** usar regressão linear para analisar padrões de vendas.
 
-O problema de negócio é entender por que alguns jogos apresentam desempenho comercial superior a outros e transformar essa análise em referências para portfólio, gênero e plataforma.
+## 1. Entendimento do problema
 
-O sucesso técnico foi definido antes da modelagem:
+A pergunta principal é:
 
-- RMSE como métrica principal, por penalizar erros grandes;
-- MAE e R² como métricas complementares;
-- comparação dos candidatos na mesma validação cruzada de cinco dobras;
-- teste reservado avaliado somente depois da seleção;
-- uso exclusivo de regressões lineares e extensões lineares regularizadas.
+> Quais informações da base ajudam a explicar as vendas globais de um jogo?
 
-## 2. Data Understanding
+O modelo pode ajudar na comparação entre jogos, gêneros e plataformas. Ele não deve ser entendido como uma previsão exata de sucesso antes do lançamento, pois algumas variáveis, como avaliações dos usuários, só aparecem depois que o jogo já foi lançado.
 
-A base possui 16.719 registros e 16 variáveis. `Global_Sales` não apresenta valores ausentes, mas os atributos de avaliação têm ausência relevante. O marcador `tbd` de `User_Score` não representa uma nota e foi convertido em valor ausente.
+Também faltam informações importantes, como orçamento, marketing e popularidade anterior da franquia. Portanto, esperamos que o modelo explique apenas uma parte das vendas.
 
-Os padrões de ausência variam com ano, gênero e nível de vendas. Por isso, remover todos os registros incompletos poderia introduzir viés. As observações foram preservadas e o tratamento foi realizado dentro dos pipelines.
+## 2. Entendimento dos dados
 
-A distribuição das vendas é fortemente assimétrica: poucos blockbusters concentram valores muito superiores à maioria. Eles foram mantidos porque representam resultados comerciais reais, não erros de coleta. A assimetria motivou testes com transformações logarítmicas e avaliação dos resíduos por faixa de vendas.
+A base possui 16.719 registros e 16 colunas. Não existem valores ausentes em Global_Sales, mas várias colunas de avaliação possuem dados faltando.
 
-Não há duplicatas integrais. Algumas combinações de jogo e plataforma se repetem, mas os demais campos diferem; portanto, nenhuma linha foi removida sem evidência de duplicação real.
+### Valores ausentes
 
-## 3. Data Preparation
+User_Score possui o texto tbd em alguns registros. Essa sigla significa que a nota ainda seria definida, então ela foi tratada como valor ausente.
 
-As vendas `NA_Sales`, `EU_Sales`, `JP_Sales` e `Other_Sales` foram excluídas dos preditores porque formam diretamente `Global_Sales`. Usá-las permitiria reconstruir o alvo e caracterizaria vazamento de dados.
+Os gráficos mostram que os dados ausentes aparecem mais em alguns anos e gêneros. Se todas essas linhas fossem removidas, a base poderia ficar concentrada em determinados tipos de jogo.
 
-`Name` também foi excluída por funcionar como identificador de alta cardinalidade. `Publisher` e `Developer` foram avaliadas com agrupamento automático de categorias raras, evitando uma coluna específica para ocorrências pouco frequentes.
+Por esse motivo, os registros foram mantidos. Os valores numéricos ausentes foram preenchidos pela mediana dentro do pipeline.
 
-A divisão foi feita em 80% para treino e 20% para teste, com semente 42. Antes dessa divisão, foram criadas somente transformações determinísticas por linha. Imputação, indicadores de ausência, escala e one-hot encoding permaneceram dentro dos pipelines e foram aprendidos apenas nas partições de treino.
+### Distribuição das vendas
 
-## 4. Modeling
+A maior parte dos jogos vende pouco ou moderadamente. Poucos jogos, chamados de blockbusters, vendem muito acima da maioria.
 
-Foram comparadas as seguintes abordagens, todas pertencentes à família linear:
+Esses jogos não foram removidos porque são casos reais. Porém, eles dificultam a modelagem, pois uma previsão errada para um blockbuster produz um erro muito alto.
 
-1. baseline pela mediana;
-2. regressão linear simples com `Critic_Count`;
-3. regressão linear múltipla com atributos básicos;
-4. inclusão controlada de `Publisher` e `Developer`;
-5. transformação `log1p` das contagens;
-6. transformação `log1p` do alvo;
-7. Ridge com busca de `alpha`;
-8. Ridge com termos quadráticos e interação.
+Também usamos gráficos em escala logarítmica para visualizar melhor os jogos comuns e os blockbusters no mesmo espaço.
 
-### Resultados da validação cruzada
+### Duplicatas
 
-| Modelo | RMSE médio | Desvio do RMSE | MAE médio | R² médio |
-|---|---:|---:|---:|---:|
-| Ridge com termos expandidos, alpha 10 | 1,2000 | 0,0650 | 0,4930 | 0,2650 |
-| **Ridge, alpha 10** | **1,2063** | **0,0623** | **0,4970** | **0,2573** |
-| Linear múltipla com contagens em log | 1,2070 | 0,0610 | 0,5000 | 0,2570 |
-| Linear múltipla com Publisher/Developer | 1,2120 | 0,0690 | 0,4870 | 0,2510 |
-| Linear com alvo em log | 1,2130 | 0,0610 | 0,3880 | 0,2490 |
-| Linear múltipla base | 1,2660 | 0,0690 | 0,5030 | 0,1830 |
-| Linear simples | 1,3430 | 0,0660 | 0,5290 | 0,0790 |
-| Baseline pela mediana | 1,4440 | 0,0600 | 0,4570 | -0,0650 |
+Não foram encontradas linhas totalmente duplicadas. Alguns jogos aparecem mais de uma vez na mesma plataforma, mas possuem diferenças em outras colunas. Sem evidência de que sejam cópias, esses registros foram mantidos.
 
-O Ridge com termos expandidos obteve o menor RMSE, mas sua vantagem precisa ficou abaixo do limiar predefinido de 0,5% em relação ao Ridge mais simples. O modelo expandido foi rejeitado por parcimônia: adicionava termos correlacionados sem ganho material. O modelo final foi **Ridge com `alpha=10`**, contagens em log e categorias raras agrupadas.
+## 3. Preparação dos dados
 
-A transformação logarítmica do alvo produziu o melhor MAE, mas não o melhor RMSE. Como o projeto definiu RMSE como métrica principal antes dos testes, ela não foi escolhida apenas por favorecer erros típicos e reduzir a influência dos blockbusters.
+### Variáveis removidas
 
-## 5. Evaluation
+As colunas NA_Sales, EU_Sales, JP_Sales e Other_Sales foram retiradas dos preditores. Elas representam vendas regionais e sua soma forma Global_Sales.
 
-O modelo selecionado foi ajustado em todo o treino e aplicado uma única vez ao teste reservado.
+Se essas colunas fossem utilizadas, o modelo receberia praticamente a resposta que deveria estimar. Isso é chamado de vazamento de dados.
 
-| Previsão no teste | RMSE | MAE | R² |
+Name também foi removida porque funciona como um identificador e possui muitos valores diferentes. O modelo poderia memorizar nomes específicos em vez de aprender padrões gerais.
+
+### Tratamentos utilizados
+
+- valores numéricos ausentes foram preenchidos pela mediana;
+- categorias foram transformadas em números com one-hot encoding;
+- variáveis numéricas foram padronizadas;
+- categorias muito raras de Publisher e Developer foram agrupadas;
+- Critic_Count e User_Count receberam versões em log para diminuir sua assimetria.
+
+Esses tratamentos foram colocados em um pipeline. Isso garante que as informações usadas no preenchimento e na padronização venham somente dos dados de treino.
+
+### Treino e teste
+
+A base foi dividida em:
+
+- 80% para treino e comparação dos modelos;
+- 20% para o teste final.
+
+O conjunto de teste ficou separado durante a escolha do modelo. Assim, ele representa melhor o comportamento em dados ainda não vistos.
+
+## 4. Modelos
+
+### Regressão linear
+
+A regressão linear tenta representar o alvo como uma soma de contribuições das variáveis:
+
+**vendas = intercepto + coeficiente × variável + erro**
+
+Na regressão simples usamos apenas uma variável. Na regressão múltipla usamos várias variáveis ao mesmo tempo.
+
+O método utilizado é o OLS, ou mínimos quadrados ordinários. Ele escolhe os coeficientes que deixam os erros quadráticos tão pequenos quanto possível.
+
+### Regressão polinomial
+
+Também testamos uma regressão polinomial com:
+
+- quadrado da nota da crítica;
+- quadrado da nota dos usuários;
+- interação entre as duas notas.
+
+Mesmo usando termos ao quadrado, o ajuste dos coeficientes continua sendo feito por OLS. Esses termos permitem que o modelo represente uma pequena curva.
+
+Não foram criadas todas as combinações possíveis, pois isso deixaria o modelo grande e difícil de interpretar.
+
+### Modelos comparados
+
+1. baseline usando a mediana;
+2. regressão simples com Critic_Count;
+3. regressão múltipla com variáveis básicas;
+4. regressão múltipla com Publisher e Developer;
+5. regressão múltipla com contagens em log;
+6. regressão com o alvo em log;
+7. regressão polinomial.
+
+## 5. Como os modelos foram comparados
+
+Foi utilizada validação cruzada com cinco divisões. Em cada repetição, o modelo treina em quatro partes e é avaliado na parte restante.
+
+As métricas utilizadas foram:
+
+- **MAE:** erro absoluto médio. É fácil de interpretar na unidade das vendas.
+- **RMSE:** também mede o erro, mas dá mais peso aos erros grandes.
+- **R²:** indica quanto da variação das vendas foi explicada pelo modelo.
+
+O RMSE foi escolhido como métrica principal porque os erros muito grandes, principalmente nos blockbusters, são importantes para o problema.
+
+### Resultados da validação
+
+| Modelo | RMSE médio | MAE médio | R² médio |
 |---|---:|---:|---:|
-| Bruta | 1,8070 | 0,5270 | 0,2090 |
-| **Limitada a zero** | **1,8010** | **0,4936** | **0,2142** |
+| Regressão polinomial | 1,201 | 0,497 | 0,264 |
+| **Regressão múltipla com contagens em log** | **1,207** | **0,500** | **0,257** |
+| Múltipla com Publisher e Developer | 1,212 | 0,487 | 0,251 |
+| Alvo em log | 1,212 | 0,388 | 0,250 |
+| Regressão múltipla base | 1,266 | 0,503 | 0,183 |
+| Regressão simples | 1,343 | 0,529 | 0,079 |
+| Baseline | 1,444 | 0,457 | -0,065 |
 
-Antes do corte, 506 previsões — 15,13% do teste — eram negativas. Como vendas negativas são impossíveis, o resultado operacional foi limitado a zero. As métricas brutas foram preservadas para não esconder essa limitação estrutural da regressão linear.
+A regressão polinomial apresentou o menor RMSE, mas a diferença foi de apenas 0,006. Essa diferença é bem menor que a variação observada entre as divisões da validação.
 
-O teste apresentou erro maior do que a média da validação, embora o MAE tenha permanecido próximo. Isso indica sensibilidade do RMSE à composição de blockbusters na amostra reservada. Os diagnósticos do notebook mostram resíduos, maiores erros, viés por faixa de vendas e desempenho por gênero e plataforma.
+Por isso, escolhemos a regressão múltipla com contagens em log. Ela apresentou resultado muito parecido e é mais simples de explicar.
 
-O R² de 0,2142 confirma capacidade explicativa moderada: os atributos disponíveis acrescentam informação sobre vendas, mas não capturam grande parte da variabilidade comercial. Coeficientes foram analisados entre dobras, e sinais instáveis não foram usados para conclusões fortes. As associações não devem ser interpretadas como causalidade.
+## 6. Resultado no teste
 
-### Validação complementar com OLS
+Depois da escolha, o modelo foi treinado novamente usando todo o conjunto de treino e aplicado ao teste.
 
-`LinearRegression` já utiliza mínimos quadrados ordinários para estimar seus coeficientes. Para acrescentar testes estatísticos, foi ajustado também um OLS reduzido com `statsmodels`, usando somente o treino, alvo em `log1p`, atributos numéricos padronizados e dummies de gênero, plataforma e classificação.
+| Previsão | RMSE | MAE | R² |
+|---|---:|---:|---:|
+| Original | 1,7968 | 0,5297 | 0,2179 |
+| Limitada a zero | 1,7900 | 0,4945 | 0,2238 |
 
-| Diagnóstico OLS | Resultado |
+O MAE de 0,4945 significa que o erro absoluto médio ficou próximo de 0,49 milhão de unidades.
+
+O R² de 0,2238 indica que o modelo explicou cerca de 22% da variação das vendas no teste. Esse resultado é melhor que o baseline, mas também mostra que boa parte das vendas depende de informações que não estão na base.
+
+### Previsões negativas
+
+A regressão linear pode produzir valores negativos, mesmo que vendas negativas não existam. Isso aconteceu em 539 registros do teste.
+
+Para o resultado final, essas previsões foram limitadas a zero. As métricas antes do ajuste também foram mantidas para deixar essa limitação visível.
+
+### Análise dos erros
+
+Os gráficos de resíduos mostram que os maiores erros acontecem principalmente nos jogos com vendas muito altas. O modelo funciona melhor para jogos próximos do padrão geral da base.
+
+Também foram analisados erros por gênero, plataforma e faixa de vendas. Isso ajuda a identificar grupos em que o modelo tem mais dificuldade.
+
+## 7. OLS com statsmodels
+
+O LinearRegression do scikit-learn já utiliza OLS. Também foi criado um modelo menor com statsmodels para conferir o funcionamento do método com um conjunto reduzido de variáveis.
+
+Esse modelo utiliza apenas as variáveis numéricas e o alvo em log. O resultado foi:
+
+| Métrica | Resultado |
 |---|---:|
-| R² ajustado no alvo em log | 0,3388 |
-| p-valor de Breusch–Pagan | 1,50 × 10⁻¹⁴⁸ |
-| p-valor de Jarque–Bera | < 0,001 |
-| Número de condição após padronização | 171,8 |
-| RMSE no teste, escala original | 1,9426 |
-| MAE no teste, escala original | 0,4528 |
-| R² no teste, escala original | 0,0858 |
+| R² ajustado no treino | 0,2242 |
+| RMSE no teste | 1,9789 |
+| MAE no teste | 0,4867 |
+| R² no teste | 0,0514 |
 
-Breusch–Pagan rejeita homocedasticidade e Jarque–Bera rejeita normalidade dos resíduos. Por isso, os erros-padrão convencionais não são adequados; o notebook usa a correção robusta HC3 e inclui gráficos de resíduos, escala-localização, Q–Q e intervalos de confiança.
+O modelo reduzido teve resultado inferior ao modelo principal. Isso era esperado, pois ele utiliza menos informações. Ele foi mantido apenas como uma comparação adicional entre uma versão simples do OLS e o pipeline completo.
 
-O OLS reduzido melhora o MAE, mas apresenta RMSE e R² inferiores aos do Ridge. Ele foi mantido como instrumento de interpretação e verificação de pressupostos, enquanto o Ridge continua sendo o modelo preditivo final escolhido pela validação cruzada.
+O resultado não muda a escolha final: a regressão múltipla com contagens em log continua sendo o modelo principal, pois apresentou RMSE e R² melhores no teste.
 
-### Comunicação visual
+## 8. Principais conclusões
 
-O notebook contém 11 visualizações executadas, organizadas para responder perguntas específicas:
+- A regressão simples superou pouco o baseline, mostrando que uma única variável não é suficiente.
+- A regressão múltipla melhorou o resultado ao combinar avaliações e características dos jogos.
+- A transformação em log ajudou nas variáveis de contagem.
+- A regressão polinomial teve o melhor RMSE médio, mas sua vantagem foi muito pequena.
+- O modelo final explicou cerca de 22% da variação das vendas no teste.
+- Os blockbusters continuam sendo os casos mais difíceis.
+- Informações como marketing, orçamento e força da franquia provavelmente ajudariam o modelo.
 
-- padrão e concentração dos valores ausentes;
-- distribuição, cauda acumulada e blockbusters;
-- correlações e diferenças entre gêneros e plataformas;
-- relações de cobertura crítica e engajamento com vendas;
-- comparação dos modelos com dispersão entre dobras;
-- diferença entre desempenho de treino e validação;
-- densidade entre valores reais e previstos e desempenho por decis;
-- resíduos, maiores erros e mapa de MAE por gênero e faixa de vendas;
-- pressupostos e intervalos robustos do OLS.
-
-## 6. Deployment e valor analítico
-
-O modelo pode apoiar benchmarking entre jogos e segmentos semelhantes, identificação de padrões de recepção e localização de grupos em que o erro é sistematicamente maior.
-
-As principais limitações são a ausência de orçamento, marketing, força prévia da franquia, distribuição, concorrência no período de lançamento e outros fatores externos. Esses elementos ajudam a explicar tanto o R² moderado quanto a dificuldade de estimar blockbusters.
-
-O principal resultado do projeto é um fluxo auditável: decisões fundamentadas nos dados, prevenção de vazamento, comparação justa de regressões lineares, otimização regularizada e diagnóstico explícito dos limites do modelo.
+O projeto mostra que não basta escolher automaticamente o menor erro. Também é importante verificar se a melhora é relevante, analisar os erros e considerar se o modelo continua compreensível.
