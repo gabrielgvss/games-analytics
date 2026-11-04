@@ -198,7 +198,7 @@ img,svg,canvas{max-width:100%}
 .numeric-control input[type=range]:focus-visible{outline:2px solid var(--lime);outline-offset:4px}
 .field-context{display:block;margin-top:4px;color:#929daf;font:700 9px var(--mono);letter-spacing:.025em}
 .scenario-validation{margin-top:14px!important;padding:11px 12px;border-left:3px solid var(--coral);background:#3a2732;color:#ffd5ce!important;font-size:11px!important;line-height:1.5}
-.scenario-validation.warning::before{content:"FORA DO CONTEXTO · ";font:700 9px var(--mono);letter-spacing:.05em;color:#ff9e8e}
+.scenario-validation.warning::before{content:"FORA DO COMUM · ";font:700 9px var(--mono);letter-spacing:.05em;color:#ff9e8e}
 .scenario-validation.error::before{content:"REVISE O VALOR · ";font:700 9px var(--mono);letter-spacing:.05em;color:#ff9e8e}
 
 @media(max-width:480px){
@@ -207,6 +207,14 @@ img,svg,canvas{max-width:100%}
   .scenario-validation{display:block!important}
   .scenario-validation[hidden]{display:none!important}
 }
+
+.sr{position:absolute;left:-9999px}
+.whatif{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:18px 0 4px}.whatif>span{font:700 10px var(--mono);color:var(--lime);letter-spacing:.08em;margin-right:4px}
+.whatif button{min-height:40px;background:transparent;border:1px solid #677184;color:#d3dcdf;padding:7px 10px;font:700 11px var(--mono);cursor:pointer}.whatif button:hover,.whatif button:focus-visible{border-color:var(--lime);color:var(--lime)}#wi-undo{border-color:var(--lime);color:var(--lime)}
+.range-box{margin-top:16px;font-size:12px;color:#cdd3dc}.range-box .rtrack{position:relative;height:14px;background:#2c3348;margin:10px 0 4px}.range-box .band{position:absolute;top:0;height:100%;background:#4d6a2a}.range-box .tick{position:absolute;top:-4px;width:3px;height:22px;background:#fff}.range-box .mk{position:absolute;top:-6px;width:5px;height:26px}.range-box .mk.e{background:var(--lime)}.range-box .mk.a{background:var(--coral)}.range-box .ax{display:flex;justify-content:space-between;font:700 10px var(--mono);color:#aab3c2}.range-box .lg{font:700 10px var(--mono);color:#aab3c2;margin-top:6px}
+.calib{margin-top:40px;max-width:760px}.calib h3{font-size:24px;letter-spacing:-.04em;margin:4px 0 8px}.calib p{color:var(--muted);font-size:13px}.calib svg{width:100%;height:auto;max-width:560px;display:block;background:#15192b;border:1px solid var(--line)}
+#models-table table{border-collapse:collapse;width:100%;font-size:12px;margin:8px 0 14px}#models-table th,#models-table td{text-align:right;padding:7px 8px;border-bottom:1px solid var(--line)}#models-table th:first-child,#models-table td:first-child{text-align:left}#models-table th{font:700 10px var(--mono);color:var(--lime)}#models-table tr.sel td{color:var(--lime)}#models-table{overflow-x:auto}
+.field-context,.drivers-scale,.drivers-scale b,.scenario-metrics span,.scenario-kicker{font-size:11px!important;color:#b2bccd}
 </style>
 </head>
 <body>
@@ -230,32 +238,32 @@ img,svg,canvas{max-width:100%}
     </section>
 
     <section class="explore" id="explorar"><div class="shell explore-inner">
-      <div class="section-heading"><span class="step">01 / JOGUE COM OS DADOS</span><h2>Qual jogo você quer explorar?</h2><p>Busque pelo nome ou comece por um dos exemplos. O catálogo reúne <strong id="catalog-count">—</strong> jogos reais que foram guardados para conferir o modelo.</p></div>
+      <div class="section-heading"><span class="step">01 / JOGUE COM OS DADOS</span><h2>Qual jogo você quer explorar?</h2><p>Busque pelo nome ou comece por um dos exemplos. O catálogo reúne <strong id="catalog-count">—</strong> jogos reais, separados de propósito para testar a estimativa de verdade.</p></div>
 
       <div class="search-block"><label for="game-search">BUSCAR JOGO</label><div class="search-input-wrap"><span aria-hidden="true">⌕</span><input id="game-search" type="search" autocomplete="off" placeholder="Digite um título, plataforma ou ano" aria-controls="search-results" aria-expanded="false"><kbd>ESC</kbd></div><div id="search-results" class="search-results" role="listbox" hidden></div><div id="quick-games" class="quick-games" aria-label="Jogos sugeridos"></div></div>
 
       <div class="play-grid">
-        <div class="result-panel" aria-live="polite"><div class="panel-top"><span>01 / ESTIMATIVA</span><span class="status-light">DADO HISTÓRICO</span></div><p class="game-name" id="selected-title">Escolha um jogo</p><div class="big-number"><strong id="prediction">—</strong><span>milhões de<br>unidades estimadas</span></div><p class="result-copy" id="result-summary">Escolha um jogo para começar a exploração.</p><p class="scenario-story" id="scenario-story" hidden></p><div class="comparison" id="comparison" hidden><div class="bar-label"><span id="pred-caption">ESTIMATIVA</span><b id="pred-label">—</b></div><div class="track"><i id="pred-bar"></i></div><div class="bar-label"><span>VENDAS REAIS</span><b id="actual-label">—</b></div><div class="track real"><i id="actual-bar"></i></div></div><p class="context-note" id="result-warning" hidden></p></div>
+        <div class="result-panel" aria-live="polite"><div class="panel-top"><span>01 / ESTIMATIVA</span><span class="status-light">DADO HISTÓRICO</span></div><p class="game-name" id="selected-title">Escolha um jogo</p><div class="big-number"><strong id="prediction">—</strong><span>milhões de<br>unidades estimadas</span></div><p class="result-copy" id="result-summary">Escolha um jogo para começar a exploração.</p><p class="scenario-story" id="scenario-story" hidden></p><div class="whatif"><span>E SE…?</span><button type="button" id="wi-reviews">Dobrar avaliações do público</button><button type="button" id="wi-critic">Nota da crítica +10</button><button type="button" id="wi-none">Sem notas</button><button type="button" id="wi-more">Editar tudo ↓</button><button type="button" id="wi-undo" hidden>↺ Voltar ao original</button></div><div class="comparison" id="comparison" hidden><div class="bar-label"><span id="pred-caption">ESTIMATIVA</span><b id="pred-label">—</b></div><div class="track"><i id="pred-bar"></i></div><div class="bar-label"><span>VENDAS REAIS</span><b id="actual-label">—</b></div><div class="track real"><i id="actual-bar"></i></div></div><p class="context-note" id="result-warning" hidden></p><p class="context-note" id="case-tag" hidden></p><div class="range-box" id="range-box" hidden></div></div>
 
-        <div class="explain-panel"><div class="panel-top"><span id="explain-step">01 / POR TRÁS DA PREVISÃO</span><span aria-hidden="true">↗ ↘</span></div><h3 id="explain-title">O que mais pesou?</h3><p id="explain-intro">Veja quais informações mais afastam a estimativa de um jogo típico.</p><div id="drivers" class="drivers"></div><p class="explain-foot">Cada barra compara o impacto dos fatores na <strong>mesma escala</strong>: esquerda reduz, direita eleva. Isso explica o cálculo, não uma relação de causa.</p></div>
+        <div class="explain-panel"><div class="panel-top"><span id="explain-step">01 / POR TRÁS DA PREVISÃO</span><span aria-hidden="true">↗ ↘</span></div><h3 id="explain-title">O que mais pesou?</h3><p id="explain-intro">Veja o que mais puxou a estimativa para cima ou para baixo.</p><div id="drivers" class="drivers"></div><p class="explain-foot">Quanto maior a barra, maior o empurrão: esquerda diminui a estimativa, direita aumenta. Isso mostra <strong>como a conta foi feita</strong>, não o que faz um jogo vender.</p></div>
       </div>
 
-      <details class="edit-panel" id="edit-details"><summary><span><b>02</b><span class="summary-title-long"> Testar uma hipótese: o que muda se…</span><span class="summary-title-short"> Mudar dados do jogo</span></span><span class="summary-hint">EDITAR ↓</span></summary><div class="edit-inner"><p>Altere uma informação e acompanhe a nova previsão ao lado. Uma mudança por vez deixa a comparação mais fácil de entender.</p><div class="edit-workspace"><form id="game-form"><div class="field-grid">
+      <div class="calib"><span class="step">ONDE A ESTIMATIVA ERRA</span><h3>A estimativa acompanha a realidade?</h3><p>Separamos os jogos em 10 grupos, do que a estimativa achou que venderia menos ao que venderia mais. Cada ponto cinza compara o que foi estimado com o que o grupo realmente vendeu. Acima da linha pontilhada, vendeu mais que o estimado; abaixo, menos. O ponto lima é o jogo que você escolheu. Cada marca nos eixos vale 10 vezes a anterior, para caber jogos pequenos e gigantes no mesmo gráfico.</p><p><strong>O que o gráfico mostra:</strong> a estimativa superestima os jogos muito pequenos e subestima os grandes sucessos. Ela “puxa tudo para o meio”.</p><div id="calib-svg"></div></div><details class="edit-panel" id="edit-details"><summary><span><b>02</b><span class="summary-title-long"> Teste uma ideia: e se este jogo fosse diferente?</span><span class="summary-title-short"> Mudar dados do jogo</span></span><span class="summary-hint">EDITAR ↓</span></summary><div class="edit-inner"><p>Altere uma informação e acompanhe a nova previsão ao lado. Uma mudança por vez deixa a comparação mais fácil de entender.</p><div class="edit-workspace"><form id="game-form"><div class="field-grid">
         <label class="numeric-field">Ano de lançamento<div class="numeric-control"><input id="Year_of_Release" type="number" min="1970" max="2035" step="1" placeholder="2008" aria-label="Ano de lançamento, valor exato"><input id="range-Year_of_Release" type="range" min="1970" max="2035" step="1" aria-label="Ajustar ano de lançamento"></div><small id="context-Year_of_Release" class="field-context"></small></label>
         <label>Plataforma<select id="Platform"><option value="">Não informado</option></select></label>
         <label>Gênero<select id="Genre"><option value="">Não informado</option></select></label>
         <label>Classificação indicativa<select id="Rating"><option value="">Não informado</option></select></label>
         <label class="numeric-field">Nota da crítica <span>0 a 100</span><div class="numeric-control"><input id="Critic_Score" type="number" min="0" max="100" step="1" placeholder="82" aria-label="Nota da crítica, valor exato"><input id="range-Critic_Score" type="range" min="0" max="100" step="1" aria-label="Ajustar nota da crítica"></div><small id="context-Critic_Score" class="field-context"></small></label>
-        <label class="numeric-field">Quantidade de críticas<div class="numeric-control"><input id="Critic_Count" type="number" min="0" max="150" step="1" placeholder="45" aria-label="Quantidade de críticas, valor exato"><input id="range-Critic_Count" type="range" min="0" max="150" step="1" aria-label="Ajustar quantidade de críticas"></div><small id="context-Critic_Count" class="field-context"></small></label>
+        <label class="numeric-field">Quantidade de críticas<div class="numeric-control"><input id="Critic_Count" type="number" min="0" max="150" step="1" placeholder="45" aria-label="Quantidade de críticas, valor exato"><input id="range-Critic_Count" type="range" min="0" max="1000" step="1" aria-label="Ajustar quantidade de críticas"></div><small id="context-Critic_Count" class="field-context"></small></label>
         <label class="numeric-field">Nota do público <span>0 a 10</span><div class="numeric-control"><input id="User_Score" type="number" min="0" max="10" step="0.1" placeholder="8,2" aria-label="Nota do público, valor exato"><input id="range-User_Score" type="range" min="0" max="10" step="0.1" aria-label="Ajustar nota do público"></div><small id="context-User_Score" class="field-context"></small></label>
-        <label class="numeric-field">Quantidade de avaliações<div class="numeric-control"><input id="User_Count" type="number" min="0" max="15000" step="1" placeholder="250" aria-label="Quantidade de avaliações, valor exato"><input id="range-User_Count" type="range" min="0" max="15000" step="1" aria-label="Ajustar quantidade de avaliações"></div><small id="context-User_Count" class="field-context"></small></label>
-        <label>Empresa que publicou<select id="Publisher"><option value="">Não informado</option></select></label>
-        <label>Estúdio criador<select id="Developer"><option value="">Não informado</option></select></label>
-      </div><div class="scenario-actions"><button id="restore-btn" type="button">Desfazer alterações ↺</button><button id="clear-btn" type="button">Limpar todos os campos</button></div></form><aside class="scenario-monitor" aria-live="polite"><span class="scenario-kicker">RESULTADO DA HIPÓTESE</span><p id="scenario-game">Jogo selecionado</p><div class="scenario-live-number"><strong id="scenario-prediction">—</strong><span>milhões de<br>unidades estimadas</span></div><div class="scenario-metrics"><div><span>ANTES</span><b id="scenario-original">—</b></div><div><span>MUDANÇA</span><b id="scenario-delta">—</b></div></div><p id="scenario-monitor-story">Altere um campo para comparar com a previsão original.</p><p id="scenario-validation" class="scenario-validation" hidden></p></aside></div><p class="edit-disclaimer">Notas e avaliações normalmente só existem depois do lançamento. Esta experiência compara padrões históricos; não prevê vendas antes de o jogo chegar ao mercado.</p></div></details>
+        <label class="numeric-field">Quantidade de avaliações<div class="numeric-control"><input id="User_Count" type="number" min="0" max="15000" step="1" placeholder="250" aria-label="Quantidade de avaliações, valor exato"><input id="range-User_Count" type="range" min="0" max="1000" step="1" aria-label="Ajustar quantidade de avaliações"></div><small id="context-User_Count" class="field-context"></small></label>
+        <label>Empresa que publicou<input id="Publisher" list="dl-Publisher" placeholder="Digite para buscar" autocomplete="off"><datalist id="dl-Publisher"></datalist></label>
+        <label>Estúdio criador<input id="Developer" list="dl-Developer" placeholder="Digite para buscar" autocomplete="off"><datalist id="dl-Developer"></datalist></label>
+      </div><p class="context-note" id="missing-note" hidden></p><div class="scenario-actions"><button id="restore-btn" type="button">Desfazer alterações ↺</button><button id="clear-btn" type="button">Limpar todos os campos</button></div></form><aside class="scenario-monitor" aria-live="polite"><span class="scenario-kicker">RESULTADO DA SUA IDEIA</span><p id="scenario-game">Jogo selecionado</p><div class="scenario-live-number"><strong id="scenario-prediction">—</strong><span>milhões de<br>unidades estimadas</span></div><div class="scenario-metrics"><div><span>ANTES</span><b id="scenario-original">—</b></div><div><span>MUDANÇA</span><b id="scenario-delta">—</b></div></div><p id="scenario-monitor-story">Altere um campo para comparar com a previsão original.</p><p id="scenario-validation" class="scenario-validation" hidden></p></aside></div><p class="edit-disclaimer">Notas e avaliações normalmente só existem depois do lançamento. Esta experiência compara padrões históricos; não prevê vendas antes de o jogo chegar ao mercado.</p></div></details>
     </div></section>
 
     <section class="lessons shell" id="aprendizados"><div class="section-heading"><span class="step">03 / O QUE APRENDEMOS</span><h2>A previsão muda conforme o tipo de jogo.</h2><p>Esses exemplos mostram onde a estimativa pode ajudar a comparar e onde pode enganar.</p></div><div class="lesson-grid"><article><span class="lesson-icon">▰▰▰</span><span class="lesson-number">A</span><h3>Jogos pequenos podem parecer grandes demais.</h3><p id="small-games-copy"></p></article><article><span class="lesson-icon">★</span><span class="lesson-number">B</span><h3>Um grande sucesso surpreende o modelo.</h3><p id="hit-copy"></p></article><article><span class="lesson-icon">?</span><span class="lesson-number">C</span><h3>Faltam peças importantes do negócio.</h3><p>Marketing, investimento e força da franquia não estão nos dados. Use a estimativa para explorar padrões, nunca como meta de vendas ou decisão de investimento.</p></article></div>
-      <details class="method"><summary>Como conferimos se o modelo funciona? <span>+</span></summary><div class="method-body"><p>Primeiro, reservamos um grupo de jogos que o modelo não viu enquanto aprendia. Comparamos várias formas de fazer a conta usando apenas os outros jogos e escolhemos a que equilibrava resultado e simplicidade. Só então conferimos a escolhida no grupo reservado.</p><p id="method-copy"></p><p>Também verificamos se características parecidas carregam informação repetida. As notas da crítica e do público, por exemplo, tendem a andar juntas. Por isso, as barras da experiência mostram partes do cálculo, não causas independentes.</p></div></details>
+      <details class="method"><summary>Dá para confiar? Como testamos <span>+</span></summary><div class="method-body"><p>Antes de criar a estimativa, separamos cerca de 20% dos jogos e escondemos do modelo. Ele aprendeu só com os outros e, no fim, tentou adivinhar as vendas dos jogos escondidos, como numa prova com questões inéditas. Testamos várias fórmulas e ficamos com a que equilibrava bons resultados e simplicidade.</p><p id="method-copy"></p><p id="method-honest"></p><div id="models-table"></div><p>Algumas informações andam juntas: jogos bem avaliados pela crítica costumam ser bem avaliados pelo público. Por isso as barras mostram partes da conta, não causas separadas do sucesso.</p></div></details>
     </section>
   </main>
 
@@ -370,7 +378,7 @@ function showSearch(query) {
   matches.length = Math.min(matches.length, 9);
   if (!matches.length) {
     const empty = document.createElement("p"); empty.className = "empty";
-    empty.textContent = "Nenhum jogo encontrado. Tente outro título ou plataforma.";
+    empty.textContent = "Nenhum jogo encontrado. O catálogo tem só uma amostra reservada para testar o modelo (3.343 jogos), então um título ou plataforma pode não estar aqui.";
     list.append(empty);
   }
   for (const {index} of matches) {
@@ -405,9 +413,9 @@ function showDrivers(effects, scenario = false) {
     const empty = document.createElement("p"); empty.textContent = scenario ? "Essa mudança quase não alterou a estimativa." : "Escolha um jogo para ver o que mais pesou na estimativa."; container.append(empty); return;
   }
   const scale = document.createElement("div"); scale.className = "drivers-scale"; scale.setAttribute("aria-hidden", "true");
-  const scaleDown = document.createElement("span"); scaleDown.textContent = "REDUZ A PREVISÃO";
-  const scaleCenter = document.createElement("b"); scaleCenter.textContent = scenario ? "SEM A MUDANÇA" : "JOGO TÍPICO";
-  const scaleUp = document.createElement("span"); scaleUp.textContent = "ELEVA A PREVISÃO";
+  const scaleDown = document.createElement("span"); scaleDown.textContent = "DIMINUI";
+  const scaleCenter = document.createElement("b"); scaleCenter.textContent = scenario ? "SEM A MUDANÇA" : "PONTO DE PARTIDA";
+  const scaleUp = document.createElement("span"); scaleUp.textContent = "AUMENTA";
   scale.append(scaleDown, scaleCenter, scaleUp); container.append(scale);
 
   const maxEffect = Math.max(...biggest.map(([,value]) => Math.abs(value)), .01);
@@ -426,7 +434,7 @@ function showDrivers(effects, scenario = false) {
     bar.style.width = `${Math.max(4, Math.abs(effect) / maxEffect * 100)}%`;
     (effect >= 0 ? upSide : downSide).append(bar); chart.append(downSide, upSide);
 
-    const description = document.createElement("small"); description.textContent = scenario ? (effect >= 0 ? "A mudança elevou a previsão" : "A mudança reduziu a previsão") : (effect >= 0 ? "Elevou a previsão frente a um jogo típico" : "Reduziu a previsão frente a um jogo típico");
+    const description = document.createElement("small"); description.textContent = scenario ? (effect >= 0 ? "Sua mudança aumentou a estimativa" : "Sua mudança diminuiu a estimativa") : (effect >= 0 ? "Puxou a estimativa para cima" : "Puxou a estimativa para baixo");
     row.append(head, chart, description); container.append(row);
   }
 
@@ -434,7 +442,7 @@ function showDrivers(effects, scenario = false) {
   const story = document.createElement("p"); story.className = "driver-story";
   story.textContent = scenario
     ? `${labels[mainField]} foi a mudança que mais mexeu no resultado, puxando a nova previsão ${mainEffect >= 0 ? "para cima" : "para baixo"}.`
-    : `${labels[mainField]} foi o fator com maior peso neste caso, puxando a estimativa ${mainEffect >= 0 ? "para cima" : "para baixo"} em relação a um jogo típico.`;
+    : `${labels[mainField]} foi o que mais pesou neste caso, puxando a estimativa ${mainEffect >= 0 ? "para cima" : "para baixo"}.`;
   container.append(story);
 }
 
@@ -442,7 +450,7 @@ function updateScenarioMonitor(result, game, sourceGame) {
   const reference = sourceGame || game;
   const title = sourceGame ? `${sourceGame.name} · cenário alterado` : game ? `${game.name} · ${game.platform}` : "Cenário criado do zero";
   byId("scenario-game").textContent = title;
-  byId("scenario-prediction").textContent = pt(result.clipped);
+  byId("scenario-prediction").textContent = est(result.clipped);
   byId("restore-btn").hidden = !(sourceGame && sourceCatalogIndex !== null);
 
   if (!reference) {
@@ -499,7 +507,7 @@ function update() {
   const result = predict(record);
   updateScenarioMonitor(result, game, sourceGame);
   byId("selected-title").textContent = game ? `${game.name} · ${game.platform}` : sourceGame ? `${sourceGame.name} · cenário alterado` : "Seu cenário";
-  byId("prediction").textContent = pt(result.clipped);
+  byId("prediction").textContent = est(result.clipped);
   const scenarioStory = byId("scenario-story");
   if (sourceGame) {
     const original = predict(sourceGame.record);
@@ -521,7 +529,7 @@ function update() {
   } else {
     byId("explain-step").textContent = "01 / POR TRÁS DA PREVISÃO";
     byId("explain-title").textContent = "O que mais pesou?";
-    byId("explain-intro").textContent = "Veja quais informações mais afastam a estimativa de um jogo típico.";
+    byId("explain-intro").textContent = "Veja o que mais puxou a estimativa para cima ou para baixo.";
     showDrivers(result.contributions);
     scenarioStory.hidden = true;
   }
@@ -533,7 +541,7 @@ function update() {
     byId("pred-bar").style.width = `${Math.max(1, result.clipped / max * 100)}%`;
     byId("actual-bar").style.width = `${Math.max(1, comparisonGame.actual / max * 100)}%`;
     byId("pred-caption").textContent = sourceGame ? "NOVA PREVISÃO" : "ESTIMATIVA";
-    byId("pred-label").textContent = `${pt(result.clipped)} mi`;
+    byId("pred-label").textContent = `${est(result.clipped)} mi`;
     byId("actual-label").textContent = `${pt(comparisonGame.actual)} mi`;
     byId("comparison").hidden = false;
   } else {
@@ -551,12 +559,12 @@ function update() {
     const value = record[field];
     if (numericFields.includes(field) && value !== null) {
       const range = model.context.numeric_ranges[field];
-      if (value < range.min || value > range.max) outOfContext.push(`${labels[field]} (${value}) está fora dos valores vistos, de ${pt(range.min,0)} a ${pt(range.max,0)}.`);
+      if (value < range.min || value > range.max) outOfContext.push(`${labels[field]} (${value}) está fora do que aparece nos dados (de ${pt(range.min,0)} a ${pt(range.max,0)}).`);
     } else if (categoryFields.includes(field) && value !== null && !Object.prototype.hasOwnProperty.call(model.categorical[field], String(value))) {
-      outOfContext.push(`${labels[field]} “${value}” não aparece nos jogos usados na comparação.`);
+      outOfContext.push(`${labels[field]} “${value}” não aparece nos dados históricos.`);
     }
   }
-  warning.textContent = outOfContext.length ? `${outOfContext.join(" ")} Essa parte do resultado é uma extrapolação e merece cautela.` : "";
+  warning.textContent = outOfContext.length ? `${outOfContext.join(" ")} Nesse ponto a estimativa vai além do que o modelo já viu; trate com cautela.` : "";
   warning.hidden = outOfContext.length === 0;
   showScenarioValidation(warning.textContent, "warning");
 }
@@ -564,25 +572,25 @@ function update() {
 function init() {
   byId("catalog-count").textContent = catalog.length.toLocaleString("pt-BR");
   const small = report.deciles[0];
-  byId("small-games-copy").textContent = `Entre os jogos que menos venderam, a média real foi de cerca de ${Math.round(small.real * 1000)} mil unidades. A estimativa média foi de ${Math.round(small.previsto * 1000)} mil. Uma diferença pequena em milhões, mas enorme para um jogo desse tamanho.`;
-  byId("hit-copy").textContent = `Wii Sports vendeu ${pt(report.wii.actual)} milhões de unidades. A conta estimou ${pt(report.wii.predicted)} milhões. O modelo não enxergou o fenômeno que ele se tornou.`;
-  byId("method-copy").textContent = `Nesse grupo guardado, a distância média entre a estimativa e a venda real foi de ${pt(report.final_raw.MAE)} milhão de unidades. Quando damos mais peso aos grandes erros, a medida sobe para ${pt(report.final_raw.RMSE)} milhão. O modelo captou cerca de ${Math.round(report.final_raw.R2 * 100)}% da variação das vendas; muita coisa continua sem explicação nos dados disponíveis.`;
+  byId("small-games-copy").textContent = `Entre os jogos que menos venderam, a venda real média foi de cerca de ${Math.round(small.real * 1000)} mil unidades. A estimativa média foi de ${Math.round(small.previsto * 1000)} mil, umas ${Math.round(small.previsto / small.real)} vezes mais. Em milhões parece pouco, mas para um jogo desse tamanho é um erro enorme.`;
+  byId("hit-copy").textContent = `Wii Sports vendeu ${pt(report.wii.actual)} milhões de unidades. A estimativa foi de ${pt(report.wii.predicted)} milhões. O modelo não enxergou o fenômeno que ele se tornou.`;
+  byId("method-copy").textContent = `Nos jogos escondidos, a estimativa errou em média ${pt(report.final_raw.MAE)} milhão de unidades por jogo. Ela captou cerca de ${Math.round(report.final_raw.R2 * 100)}% do que faz as vendas variarem; o resto (marketing, força da franquia, sorte) não está nos dados.`;
   for (const field of categoryFields) {
-    const select = byId(field);
+    const select = byId("dl-" + field) || byId(field);
     for (const value of model.options[field]) {const option = document.createElement("option"); option.value = value; option.textContent = value; select.append(option);}
   }
   for (const field of numericFields) {
     const observed = model.context.numeric_ranges[field];
     const digits = field === "User_Score" ? 1 : 0;
     const formatContext = value => field === "Year_of_Release" ? String(Math.round(value)) : pt(value, digits);
-    byId(`context-${field}`).textContent = `Faixa observada: ${formatContext(observed.min)} a ${formatContext(observed.max)}`;
-    byId(`range-${field}`).addEventListener("input", event => {byId(field).value = event.target.value;});
+    byId(`context-${field}`).textContent = `Nos dados: ${formatContext(observed.min)} a ${formatContext(observed.max)}${LOGMAX[field] ? " · o controle anda em “dobros”: cada passo duplica" : ""}`;
+    byId(`range-${field}`).addEventListener("input", event => {byId(field).value = toVal(field, Number(event.target.value));});
     byId(field).addEventListener("input", () => syncRangeFromNumber(field));
     syncRangeFromNumber(field);
   }
   const suggestions = [
-    ["Need for Speed Carbon", "PS3", "Jogo comum"],
-    ["Wii Sports", "Wii", "Grande sucesso"],
+    ["Two Worlds II", "PC", "Jogo comum"],["Need for Speed Carbon", "PS3", "Acerto raro"],
+    ["Wii Sports", "Wii", "Hit que o modelo não viu"],
     ["2002 FIFA World Cup", "XB", "Vendas baixas"],
   ];
   for (const [name,platform,label] of suggestions) {
@@ -594,7 +602,7 @@ function init() {
     button.addEventListener("click", () => selectGame(index));
     byId("quick-games").append(button);
   }
-  const first = catalog.findIndex(game => game.name === "Need for Speed Carbon" && game.platform === "PS3");
+  const first = catalog.findIndex(game => game.name === "Two Worlds II" && game.platform === "PC");
   if (first >= 0) selectGame(first);
 }
 
@@ -623,6 +631,92 @@ byId("clear-btn").addEventListener("click", () => {
 byId("edit-details").addEventListener("toggle", () => {
   byId("edit-details").querySelector(".summary-hint").textContent = byId("edit-details").open ? "FECHAR ↑" : "EDITAR ↓";
 });
+const BINS=[[0, 0.02, 0.07, 0.26, 417], [0.1053, 0.02, 0.08, 0.31, 418], [0.2459, 0.02, 0.11, 0.416, 418], [0.3899, 0.02, 0.13, 0.51, 418], [0.5619, 0.04, 0.19, 0.703, 418], [0.7812, 0.057, 0.29, 0.976, 418], [1.2642, 0.09, 0.45, 1.353, 418], [1000000000.0, 0.177, 1.16, 5.083, 418]];
+const est=v=>v<0.1?"< 0,1":pt(v);
+const sg=v=>(v>=0?"+":"−")+pt(Math.abs(v));
+const LOGMAX={Critic_Count:150,User_Count:15000};
+const toVal=(f,p)=>LOGMAX[f]?Math.round(Math.expm1(p/1000*Math.log1p(LOGMAX[f]))):p;
+const toPos=(f,v)=>LOGMAX[f]?Math.round(Math.log1p(v)/Math.log1p(LOGMAX[f])*1000):v;
+function syncRangeFromNumber(field){
+  const input=byId(field),range=byId(`range-${field}`),value=input.value.trim();
+  let n=value===""?model.numeric[field].reference:Number(value);
+  n=LOGMAX[field]?Math.min(LOGMAX[field],Math.max(0,n)):Math.min(Number(range.max),Math.max(Number(range.min),n));
+  range.value=toPos(field,n);
+}
+const WITHIN2=catalog.filter(g=>{const c=Math.max(0,predict(g.record).raw);return c/g.actual<=2&&c/g.actual>=.5}).length/catalog.length;
+const NO_SCORE=catalog.filter(g=>g.record.Critic_Score===null&&g.record.User_Score===null).length/catalog.length;
+const L=v=>Math.min(1,Math.max(0,(Math.log10(Math.max(v,.01))+2)/4))*100;
+function whatIf(fn){
+  const r=readForm();fn(r);
+  for(const f of numericFields)byId(f).value=r[f]??"";
+  numericFields.forEach(syncRangeFromNumber);
+  activeCatalogIndex=null;hasEditedScenario=true;update();
+}
+function extras(){
+  const rec=readForm();
+  const box=byId("range-box"),tag=byId("case-tag"),miss=byId("missing-note");
+  if(!fields.some(f=>rec[f]!==null)||validate(rec)){box.hidden=true;tag.hidden=true;miss.hidden=true;byId("wi-undo").hidden=true;drawCalib(null);return}
+  const res=predict(rec),c=res.clipped;
+  const g=activeCatalogIndex===null?null:catalog[activeCatalogIndex];
+  const srcG=hasEditedScenario&&sourceCatalogIndex!==null?catalog[sourceCatalogIndex]:null;
+  const cg=g||srcG;
+  byId("wi-undo").hidden=byId("restore-btn").hidden;
+  // a conta fecha
+  const d=byId("drivers");
+  if(d.children.length){
+    const p=document.createElement("p");p.className="driver-story";
+    if(srcG){const o=predict(srcG.record).raw;p.textContent=`Como chegamos lá: estimativa original ${pt(o)} + efeito das suas mudanças (${sg(res.raw-o)}) = ${pt(res.raw)} milhões.`}
+    else{const t=Object.values(res.contributions).reduce((a,b)=>a+b,0);p.textContent=`Como chegamos nesse número: partimos de ${pt(model.baseline)} milhão (um jogo de referência) e somamos o efeito de cada característica (${sg(t)} no total) = ${pt(res.raw)} milhões. Acima estão os três maiores efeitos.${res.raw<0?" A conta deu abaixo de zero, o que não existe em vendas; por isso mostramos “< 0,1”.":""}`}
+    d.append(p);
+  }
+  // faixa de jogos parecidos
+  const b=BINS.find(x=>c<x[0])||BINS[BINS.length-1];
+  box.innerHTML=`<div>Olhando ${b[4]} jogos com estimativa parecida, <strong>8 em cada 10 venderam entre ${pt(b[1])} e ${pt(b[3])} milhões</strong>, e metade vendeu menos de ${pt(b[2])}. Um número só parece mais exato do que realmente é.</div><div class="rtrack"><div class="band" style="left:${L(b[1])}%;width:${L(b[3])-L(b[1])}%"></div><div class="tick" style="left:${L(b[2])}%"></div><div class="mk e" style="left:${L(c)}%"></div>${cg?`<div class="mk a" style="left:${L(cg.actual)}%"></div>`:""}</div><div class="ax"><span>0,01</span><span>0,1</span><span>1</span><span>10</span><span>100 mi</span></div><div class="lg">FAIXA = ONDE A MAIORIA VENDEU · TRAÇO BRANCO = O JOGO DO MEIO · LIMA = ESTIMATIVA${cg?" · CORAL = VENDA REAL":""} · CADA MARCA VALE 10× A ANTERIOR</div>`;
+  box.hidden=false;
+  // caso das lições
+  let msg="";
+  if(cg){const a=cg.actual;
+    if(a>=3&&c<=a/2)msg=`Um grande sucesso (${pt(a)} milhões) que a estimativa não enxergou. É o caso B das lições, logo abaixo.`;
+    else if(a<.15&&c>=3*a&&c>=.15)msg=`Um jogo pequeno que a estimativa faz parecer maior. É o caso A das lições, logo abaixo.`;
+    else if(c/a<=2&&c/a>=.5)msg=`A estimativa ficou perto aqui, mas isso é exceção: só ${Math.round(WITHIN2*100)}% dos jogos têm estimativa entre a metade e o dobro do que realmente venderam.`;
+  }
+  tag.textContent=msg;tag.hidden=!msg;
+  // campo vazio = "sem dado"
+  const empt=["Critic_Score","Critic_Count","User_Score","User_Count"].filter(f=>rec[f]===null);
+  if(empt.length){const e=empt.reduce((a,f)=>a+model.numeric[f].missing,0);
+    miss.textContent=`Campo em branco quer dizer “sem informação”, não zero. Deixar ${empt.map(f=>labels[f].toLowerCase()).join(", ")} em branco já muda a estimativa em ${sg(e)} milhões, porque jogos sem esse dado costumam vender diferente. ${Math.round(NO_SCORE*100)}% dos jogos do catálogo não têm nenhuma nota, nem da crítica nem do público.`;miss.hidden=false}
+  else miss.hidden=true;
+  drawCalib(cg?{x:c,y:cg.actual}:null);
+}
+function drawCalib(pt0){
+  const W=520,H=340,m0=46,P=v=>({x:m0+(Math.log10(Math.max(v,.01))+2)/4*(W-m0-14),y:H-34-(Math.log10(Math.max(v,.01))+2)/4*(H-34-14)});
+  let h=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfico comparando a estimativa com as vendas reais de 10 grupos de jogos">`;
+  [.01,.1,1,10,100].forEach(t=>{const a=P(t);h+=`<line x1="${m0}" x2="${W-14}" y1="${a.y}" y2="${a.y}" stroke="#2c3348"/><line y1="14" y2="${H-34}" x1="${a.x}" x2="${a.x}" stroke="#2c3348"/><text x="${m0-6}" y="${a.y+4}" text-anchor="end" fill="#aab3c2" font-size="11">${pt(t,t<1?(t<.1?2:1):0)}</text><text x="${a.x}" y="${H-18}" text-anchor="middle" fill="#aab3c2" font-size="11">${pt(t,t<1?(t<.1?2:1):0)}</text>`});
+  const s=P(.01),e=P(100);h+=`<line x1="${s.x}" y1="${s.y}" x2="${e.x}" y2="${e.y}" stroke="#778197" stroke-dasharray="5 4"/><text x="${e.x-6}" y="${e.y+14}" text-anchor="end" fill="#778197" font-size="10">acerto perfeito</text>`;
+  for(const d of report.deciles){const a=P(d.previsto),b=P(d.real);h+=`<circle cx="${a.x}" cy="${b.y}" r="6" fill="#8190a3"/>`}
+  const w=P(report.wii.predicted),wy=P(report.wii.actual);h+=`<circle cx="${w.x}" cy="${wy.y}" r="5" fill="none" stroke="#ff806d" stroke-width="2"/><text x="${w.x+9}" y="${wy.y+4}" fill="#ffbfaf" font-size="11">Wii Sports</text>`;
+  if(pt0){const a=P(pt0.x),b=P(pt0.y);h+=`<circle cx="${a.x}" cy="${b.y}" r="8" fill="#c8f66d" stroke="#101222" stroke-width="2"/>`}
+  h+=`<text x="${(W+m0)/2}" y="${H-3}" text-anchor="middle" fill="#b2b9ca" font-size="11">ESTIMADO (milhões)</text><text transform="translate(11 ${H/2}) rotate(-90)" text-anchor="middle" fill="#b2b9ca" font-size="11">REAL (milhões)</text></svg>`;
+  byId("calib-svg").innerHTML=h;
+}
+function methodExtras(){
+  const tm=report.test_models,base=tm.find(x=>x.modelo.startsWith("Baseline")),sel=tm.find(x=>x.modelo===report.selected),best=[...tm].sort((a,b)=>a.MAE-b.MAE)[0];
+  const med=catalog.map(g=>g.actual).sort((a,b)=>a-b)[Math.floor(catalog.length/2)];
+  const share=Math.round(report.wii.residual**2/(report.final_raw.RMSE**2*report.dataset.test)*100);
+  byId("method-honest").textContent=`Um teste simples: se ignorássemos tudo e chutássemos sempre a venda do jogo “do meio” (${pt(med)} milhão), erraríamos em média ${pt(base.MAE)} milhão por jogo. Com a estimativa, o erro médio é ${pt(report.final_clipped.MAE)}, praticamente o mesmo. Ou seja: para o jogo comum, a estimativa quase não ajuda. Onde ela ajuda é nos grandes sucessos, em que erra menos que o chute. Um único jogo, o Wii Sports, pesa ${share}% no cálculo do erro total. ${best.modelo!==sel.modelo?`Uma fórmula alternativa errou menos no jogo comum (${pt(best.MAE)} milhão), mas subestimou ainda mais os grandes sucessos; qual é a melhor depende do que você quer saber. `:""}Em ${report.negative_pct.toFixed(0)}% dos jogos a conta dá abaixo de zero, o que não existe em vendas; por isso mostramos “< 0,1”.`;
+  const nm={"Baseline — mediana":"Chutar sempre o jogo do meio","Linear simples — Critic_Count":"Só a quantidade de críticas","Linear múltipla — base":"Várias informações (básica)","Linear — alvo em log":"Estimar em porcentagem, não em unidades","Linear múltipla — Publisher/Developer":"Inclui empresa e estúdio","Linear múltipla — contagens em log":"Versão escolhida","Regressão polinomial — grau 2":"Versão com curvas (mais complexa)"};
+  let h='<table><thead><tr><th>FÓRMULA TESTADA</th><th>ERRO MÉDIO (MI)</th><th>ERRO NOS CASOS GRAVES</th><th>% EXPLICADO</th></tr></thead><tbody>';
+  for(const x of tm)h+=`<tr class="${x.modelo===report.selected?"sel":""}"><td>${nm[x.modelo]||x.modelo}${x.modelo===report.selected?" ★":""}</td><td>${pt(x.MAE)}</td><td>${pt(x.RMSE)}</td><td>${Math.max(0,Math.round(x.R2*100))}%</td></tr>`;
+  byId("models-table").innerHTML=h+"</tbody></table>";
+}
+const __update=update;update=function(){__update();extras()};
+byId("wi-reviews").addEventListener("click",()=>whatIf(r=>{r.User_Count=Math.min(15000,Math.round((r.User_Count??model.numeric.User_Count.reference)*2))}));
+byId("wi-critic").addEventListener("click",()=>whatIf(r=>{r.Critic_Score=Math.min(100,(r.Critic_Score??model.numeric.Critic_Score.reference)+10)}));
+byId("wi-none").addEventListener("click",()=>whatIf(r=>{r.Critic_Score=r.Critic_Count=r.User_Score=r.User_Count=null}));
+byId("wi-more").addEventListener("click",()=>{const d=byId("edit-details");d.open=true;d.scrollIntoView({behavior:"smooth",block:"start"})});
+byId("wi-undo").addEventListener("click",()=>byId("restore-btn").click());
+methodExtras();
+byId("User_Count").addEventListener("input",()=>{});
 init();
 </script>
 </body>
