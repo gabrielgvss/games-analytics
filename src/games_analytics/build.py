@@ -57,7 +57,7 @@ def portable_model(model, train: pd.DataFrame) -> dict:
         effects["__UNKNOWN__"] = float(predicted[-2] - baseline)
         effects["__MISSING__"] = float(predicted[-1] - baseline)
         categorical[field] = effects
-        options[field] = values[:60]
+        options[field] = values
     ranges = {
         field: {"min": float(train[field].min()), "max": float(train[field].max())}
         for field in NUM_INPUT
@@ -178,13 +178,16 @@ def main():
     parser.add_argument("--data", type=Path, help="CSV local da versão 2; por padrão, baixar pelo kagglehub")
     args = parser.parse_args()
     frame = load_data(args.data)
-    train, test = split(prepare(frame))
+    prepared = prepare(frame)
+    train, test = split(prepared)
     cv = cross_validation(train)
     selected = choose_model(cv)
     comparison, model, raw = test_all(train, test, selected)
     if selected != "Linear múltipla — contagens em log":
         raise ValueError(f"Exportação offline para {selected} ainda não implementada")
     spec = portable_model(model, train)
+    for field in CAT_EXT:
+        spec["options"][field] = [str(value) for value in prepared[field].value_counts(dropna=True).index]
     report_data = report(train, test, cv, comparison, selected, raw, spec)
     payload = {"report": report_data, "model": spec}
     artifact_dir = ROOT / "artifacts"

@@ -176,3 +176,26 @@ img,svg,canvas{max-width:100%}
   .scenario-actions{display:grid;grid-template-columns:1fr}
   #restore-btn,#clear-btn{width:100%;margin:0}
 }
+
+/* Guided inputs and validation for the scenario editor. */
+.field-grid select{width:100%;display:block;background:#f7f6ef;color:var(--bg);border:2px solid transparent;border-radius:0;padding:9px;min-height:46px;margin-top:5px;font-size:12px;font-weight:700}
+.field-grid select:focus{border-color:var(--lime);outline:none}
+.numeric-control{display:grid;grid-template-columns:88px minmax(0,1fr);gap:10px;align-items:center;margin-top:5px}
+.numeric-control input[type=number]{margin:0;min-height:46px;font-size:14px;font-weight:800}
+.numeric-control input[type=range]{appearance:none;width:100%;height:24px;min-height:24px;margin:0;padding:0;border:0;background:transparent}
+.numeric-control input[type=range]::-webkit-slider-runnable-track{height:8px;background:#3a435b;box-shadow:inset 0 0 0 1px #59637a}
+.numeric-control input[type=range]::-webkit-slider-thumb{appearance:none;width:22px;height:22px;margin-top:-7px;background:var(--lime);border:3px solid #15192b;border-radius:0;box-shadow:2px 2px 0 #536f31}
+.numeric-control input[type=range]::-moz-range-track{height:8px;background:#3a435b;border:1px solid #59637a}
+.numeric-control input[type=range]::-moz-range-thumb{width:18px;height:18px;background:var(--lime);border:3px solid #15192b;border-radius:0;box-shadow:2px 2px 0 #536f31}
+.numeric-control input[type=range]:focus-visible{outline:2px solid var(--lime);outline-offset:4px}
+.field-context{display:block;margin-top:4px;color:#929daf;font:700 9px var(--mono);letter-spacing:.025em}
+.scenario-validation{margin-top:14px!important;padding:11px 12px;border-left:3px solid var(--coral);background:#3a2732;color:#ffd5ce!important;font-size:11px!important;line-height:1.5}
+.scenario-validation.warning::before{content:"FORA DO CONTEXTO · ";font:700 9px var(--mono);letter-spacing:.05em;color:#ff9e8e}
+.scenario-validation.error::before{content:"REVISE O VALOR · ";font:700 9px var(--mono);letter-spacing:.05em;color:#ff9e8e}
+
+@media(max-width:480px){
+  .field-grid select{font-size:16px}
+  .numeric-control{grid-template-columns:82px minmax(0,1fr)}
+  .scenario-validation{display:block!important}
+  .scenario-validation[hidden]{display:none!important}
+}

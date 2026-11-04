@@ -45,6 +45,23 @@ function readForm() {
 
 function fillForm(record) {
   for (const field of fields) byId(field).value = record[field] ?? "";
+  for (const field of numericFields) syncRangeFromNumber(field);
+}
+
+function syncRangeFromNumber(field) {
+  const input = byId(field);
+  const range = byId(`range-${field}`);
+  const value = input.value.trim();
+  const fallback = model.numeric[field].reference;
+  const numeric = value === "" ? fallback : Number(value);
+  range.value = Math.min(Number(range.max), Math.max(Number(range.min), numeric));
+}
+
+function showScenarioValidation(message, type = "warning") {
+  const feedback = byId("scenario-validation");
+  feedback.textContent = message;
+  feedback.className = `scenario-validation ${type}`;
+  feedback.hidden = !message;
 }
 
 function validate(record) {
@@ -205,6 +222,7 @@ function update() {
     byId("prediction").textContent = "—";
     byId("result-summary").textContent = "Busque um título acima ou abra os controles para criar seu cenário.";
     showScenarioMonitorMessage("Preencha os campos abaixo para criar uma nova estimativa.");
+    showScenarioValidation("");
     byId("comparison").hidden = true; warning.hidden = true; byId("scenario-story").hidden = true; byId("drivers").replaceChildren(); return;
   }
   const invalid = validate(record);
@@ -212,6 +230,7 @@ function update() {
     byId("prediction").textContent = "—";
     byId("result-summary").textContent = "Ajuste os dados para continuar.";
     showScenarioMonitorMessage(invalid);
+    showScenarioValidation(invalid, "error");
     byId("comparison").hidden = true; warning.textContent = invalid; warning.hidden = false; byId("scenario-story").hidden = true; byId("drivers").replaceChildren(); return;
   }
   const result = predict(record);
@@ -262,7 +281,8 @@ function update() {
   const changedFields = fields.filter(field => {
     const before = sourceGame?.record[field] ?? null;
     const after = record[field] ?? null;
-    return sourceGame ? (numericFields.includes(field) && before !== null && after !== null ? Number(before) !== Number(after) : before !== after) : after !== null;
+    if (game) return false;
+    return sourceGame ? (numericFields.includes(field) && before !== null && after !== null ? Number(before) !== Number(after) : before !== after) : hasEditedScenario && after !== null;
   });
   for (const field of changedFields) {
     const value = record[field];
@@ -275,6 +295,7 @@ function update() {
   }
   warning.textContent = outOfContext.length ? `${outOfContext.join(" ")} Essa parte do resultado é uma extrapolação e merece cautela.` : "";
   warning.hidden = outOfContext.length === 0;
+  showScenarioValidation(warning.textContent, "warning");
 }
 
 function init() {
@@ -284,8 +305,17 @@ function init() {
   byId("hit-copy").textContent = `Wii Sports vendeu ${pt(report.wii.actual)} milhões de unidades. A conta estimou ${pt(report.wii.predicted)} milhões. O modelo não enxergou o fenômeno que ele se tornou.`;
   byId("method-copy").textContent = `Nesse grupo guardado, a distância média entre a estimativa e a venda real foi de ${pt(report.final_raw.MAE)} milhão de unidades. Quando damos mais peso aos grandes erros, a medida sobe para ${pt(report.final_raw.RMSE)} milhão. O modelo captou cerca de ${Math.round(report.final_raw.R2 * 100)}% da variação das vendas; muita coisa continua sem explicação nos dados disponíveis.`;
   for (const field of categoryFields) {
-    const list = byId(`list-${field}`);
-    for (const value of model.options[field]) {const option = document.createElement("option"); option.value = value; list.append(option);}
+    const select = byId(field);
+    for (const value of model.options[field]) {const option = document.createElement("option"); option.value = value; option.textContent = value; select.append(option);}
+  }
+  for (const field of numericFields) {
+    const observed = model.context.numeric_ranges[field];
+    const digits = field === "User_Score" ? 1 : 0;
+    const formatContext = value => field === "Year_of_Release" ? String(Math.round(value)) : pt(value, digits);
+    byId(`context-${field}`).textContent = `Faixa observada: ${formatContext(observed.min)} a ${formatContext(observed.max)}`;
+    byId(`range-${field}`).addEventListener("input", event => {byId(field).value = event.target.value;});
+    byId(field).addEventListener("input", () => syncRangeFromNumber(field));
+    syncRangeFromNumber(field);
   }
   const suggestions = [
     ["Need for Speed Carbon", "PS3", "Jogo comum"],
