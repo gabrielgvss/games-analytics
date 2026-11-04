@@ -49,8 +49,8 @@ assert.equal(elements.get('comparison').hidden, false);
 
 elements.get('Critic_Score').value = '100';
 elements.get('game-form').listeners.input({target:elements.get('Critic_Score')});
-assert.equal(elements.get('selected-title').textContent, 'Seu cenário');
-assert.equal(elements.get('comparison').hidden, true);
+assert.equal(elements.get('selected-title').textContent, 'Wii Sports · cenário alterado');
+assert.equal(elements.get('comparison').hidden, false);
 assert.ok(elements.get('drivers').children.length > 0);
 
 search.value = 'jogo que nao existe xyz';

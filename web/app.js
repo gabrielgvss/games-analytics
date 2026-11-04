@@ -139,7 +139,7 @@ function showDrivers(effects, scenario = false) {
     head.append(name, value);
 
     const chart = document.createElement("div"); chart.className = "driver-chart"; chart.setAttribute("role", "img");
-    chart.setAttribute("aria-label", `${labels[field]} ${effect >= 0 ? "elevou" : "reduziu"} a estimativa em ${pt(Math.abs(effect))} milhão${Math.abs(effect) === 1 ? "" : "ões"}.`);
+    chart.setAttribute("aria-label", `${labels[field]} ${effect >= 0 ? "elevou" : "reduziu"} a estimativa em ${pt(Math.abs(effect))} ${Math.abs(effect) === 1 ? "milhão" : "milhões"}.`);
     const downSide = document.createElement("div"); downSide.className = "driver-side driver-side-down";
     const upSide = document.createElement("div"); upSide.className = "driver-side driver-side-up";
     const bar = document.createElement("i"); bar.className = effect >= 0 ? "driver-bar driver-bar-up" : "driver-bar driver-bar-down";
@@ -158,6 +158,41 @@ function showDrivers(effects, scenario = false) {
   container.append(story);
 }
 
+function updateScenarioMonitor(result, game, sourceGame) {
+  const reference = sourceGame || game;
+  const title = sourceGame ? `${sourceGame.name} · cenário alterado` : game ? `${game.name} · ${game.platform}` : "Cenário criado do zero";
+  byId("scenario-game").textContent = title;
+  byId("scenario-prediction").textContent = pt(result.clipped);
+  byId("restore-btn").hidden = !(sourceGame && sourceCatalogIndex !== null);
+
+  if (!reference) {
+    byId("scenario-original").textContent = "—";
+    byId("scenario-delta").textContent = "SEM BASE";
+    byId("scenario-delta").className = "";
+    byId("scenario-monitor-story").textContent = "Este cenário não parte de um jogo do catálogo. O número acima é a estimativa atual.";
+    return;
+  }
+
+  const original = predict(reference.record).clipped;
+  const delta = result.clipped - original;
+  byId("scenario-original").textContent = `${pt(original)} mi`;
+  byId("scenario-delta").textContent = `${delta > 0 ? "+" : delta < 0 ? "−" : ""}${pt(Math.abs(delta))} mi`;
+  byId("scenario-delta").className = delta > 0 ? "up" : delta < 0 ? "down" : "";
+  byId("scenario-monitor-story").textContent = sourceGame
+    ? `Com as alterações, o palpite ficou ${pt(Math.abs(delta))} ${Math.abs(delta) === 1 ? "milhão" : "milhões"} ${delta > 0 ? "acima" : delta < 0 ? "abaixo" : "igual ao"} original.`
+    : "Este é o ponto de partida. Altere um campo para comparar o efeito imediatamente.";
+}
+
+function showScenarioMonitorMessage(message) {
+  byId("scenario-game").textContent = "Cenário sem resultado";
+  byId("scenario-prediction").textContent = "—";
+  byId("scenario-original").textContent = "—";
+  byId("scenario-delta").textContent = "—";
+  byId("scenario-delta").className = "";
+  byId("scenario-monitor-story").textContent = message;
+  byId("restore-btn").hidden = !(sourceCatalogIndex !== null && hasEditedScenario);
+}
+
 function update() {
   const record = readForm();
   const game = activeCatalogIndex === null ? null : catalog[activeCatalogIndex];
@@ -169,15 +204,18 @@ function update() {
     byId("selected-title").textContent = "Escolha um jogo";
     byId("prediction").textContent = "—";
     byId("result-summary").textContent = "Busque um título acima ou abra os controles para criar seu cenário.";
+    showScenarioMonitorMessage("Preencha os campos abaixo para criar uma nova estimativa.");
     byId("comparison").hidden = true; warning.hidden = true; byId("scenario-story").hidden = true; byId("drivers").replaceChildren(); return;
   }
   const invalid = validate(record);
   if (invalid) {
     byId("prediction").textContent = "—";
     byId("result-summary").textContent = "Ajuste os dados para continuar.";
+    showScenarioMonitorMessage(invalid);
     byId("comparison").hidden = true; warning.textContent = invalid; warning.hidden = false; byId("scenario-story").hidden = true; byId("drivers").replaceChildren(); return;
   }
   const result = predict(record);
+  updateScenarioMonitor(result, game, sourceGame);
   byId("selected-title").textContent = game ? `${game.name} · ${game.platform}` : sourceGame ? `${sourceGame.name} · cenário alterado` : "Seu cenário";
   byId("prediction").textContent = pt(result.clipped);
   const scenarioStory = byId("scenario-story");
@@ -208,7 +246,7 @@ function update() {
   if (comparisonGame) {
     const delta = result.clipped - comparisonGame.actual;
     const direction = delta >= 0 ? "acima" : "abaixo";
-    byId("result-summary").textContent = `Neste jogo, a estimativa ficou ${pt(Math.abs(delta))} milhão${Math.abs(delta) === 1 ? "" : "ões"} ${direction} do que aconteceu de verdade.`;
+    byId("result-summary").textContent = `Neste jogo, a estimativa ficou ${pt(Math.abs(delta))} ${Math.abs(delta) === 1 ? "milhão" : "milhões"} ${direction} do que aconteceu de verdade.`;
     const max = Math.max(comparisonGame.actual, result.clipped, .01);
     byId("pred-bar").style.width = `${Math.max(1, result.clipped / max * 100)}%`;
     byId("actual-bar").style.width = `${Math.max(1, comparisonGame.actual / max * 100)}%`;
@@ -282,5 +320,14 @@ byId("search-results").addEventListener("keydown", event => {
   }
 });
 byId("game-form").addEventListener("input", () => {activeCatalogIndex = null; hasEditedScenario = true; update();});
-byId("game-form").addEventListener("reset", () => {activeCatalogIndex = null; sourceCatalogIndex = null; hasEditedScenario = false; byId("game-search").value = ""; setTimeout(update, 0);});
+byId("restore-btn").addEventListener("click", () => {if (sourceCatalogIndex !== null) selectGame(sourceCatalogIndex);});
+byId("clear-btn").addEventListener("click", () => {
+  byId("game-form").reset();
+  activeCatalogIndex = null; sourceCatalogIndex = null; hasEditedScenario = false;
+  byId("game-search").value = "";
+  update();
+});
+byId("edit-details").addEventListener("toggle", () => {
+  byId("edit-details").querySelector(".summary-hint").textContent = byId("edit-details").open ? "FECHAR ↑" : "EDITAR ↓";
+});
 init();
