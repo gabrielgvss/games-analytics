@@ -1,190 +1,48 @@
-# Game Sales Analytics
+# Game Sales Lab
 
-## Análise de vendas de videogames com regressão linear
+Análise reproduzível de vendas históricas de videogames com regressão linear, acompanhada de um [simulador interativo offline](index.html). A análise acadêmica original é de **Gabriel Silveira e Marcos Reis**; a evolução deste repositório para portfólio é de **Gabriel Silveira**.
 
-Este projeto busca entender quais características dos jogos têm relação com suas vendas globais. A base contém informações como plataforma, gênero, ano de lançamento, notas da crítica e avaliações dos usuários.
+## Experimente
 
-O trabalho segue as etapas do CRISP-DM: entender o problema, conhecer os dados, preparar a base, criar os modelos e avaliar os resultados.
+Abra [`index.html`](index.html) com dois cliques. O arquivo contém HTML, CSS, JavaScript, parâmetros do modelo treinado e resumos dos resultados. Não precisa de internet, servidor, Python ou conta Kaggle para funcionar. Busque entre **3.343 jogos com nome do conjunto reservado**, escolha um dos casos sugeridos ou altere os dados de um jogo. A estimativa e a explicação mudam na hora. A página apresenta primeiro o resultado em linguagem de negócio; os detalhes do método ficam opcionais.
 
-**Unidade analisada:** um jogo em uma plataforma.  
-**Variável que queremos estimar:** Global_Sales, em milhões de unidades.  
-**Objetivo:** usar regressão linear para analisar padrões de vendas.
+**Interpretação:** o modelo usa notas e contagens de avaliações observadas depois do lançamento. A ferramenta explora padrões de uma base histórica, não prevê com segurança as vendas de jogos futuros. Vendas são apresentadas em milhões de unidades.
 
-## 1. Entendimento do problema
+## Reproduza o estudo
 
-A pergunta principal é:
+Requisitos: Python 3.11+ e, para verificar o JavaScript, Node.js 18+. Na raiz do projeto:
 
-> Quais informações da base ajudam a explicar as vendas globais de um jogo?
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -e .
+.\.venv\Scripts\python.exe -m games_analytics.build
+.\.venv\Scripts\python.exe scripts\refresh_narrative.py
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+```
 
-O modelo pode ajudar na comparação entre jogos, gêneros e plataformas. Ele não deve ser entendido como uma previsão exata de sucesso antes do lançamento, pois algumas variáveis, como avaliações dos usuários, só aparecem depois que o jogo já foi lançado.
+Em macOS/Linux, ative o ambiente virtual com `source .venv/bin/activate` e use `python` nos comandos. O `build` baixa a **versão 2** do [dataset público no Kaggle](https://www.kaggle.com/datasets/rush4ratio/video-game-sales-with-ratings) via `kagglehub`, verifica seu SHA-256 e gera `artifacts/results.json` e `index.html`. Também é possível informar `--data caminho/do/arquivo.csv` para usar uma cópia local da mesma versão. O CSV não é versionado. Não use `pip install sklearn`; o pacote correto é `scikit-learn` e já consta em `pyproject.toml`.
 
-Também faltam informações importantes, como orçamento, marketing e popularidade anterior da franquia. Portanto, esperamos que o modelo explique apenas uma parte das vendas.
+Depois do build, execute o [notebook](games_analytics.ipynb) para reproduzir as figuras acadêmicas. O [relatório escrito](doc.md) é gerado do mesmo JSON de resultados.
 
-## 2. Entendimento dos dados
+## Como o modelo foi avaliado
 
-A base possui 16.719 registros e 16 colunas. Não existem valores ausentes em Global_Sales, mas várias colunas de avaliação possuem dados faltando.
+- Divisão 80/20 com semente 42; cinco dobras de validação cruzada apenas no treino.
+- Imputação, escala, categorias raras e one-hot dentro dos pipelines de cada dobra.
+- Sete candidatos, incluindo baseline, regressão simples, regressões múltiplas, alvo em log e polinomial.
+- Seleção por RMSE de validação com critério explícito de simplicidade; comparação dos sete no teste **após** a escolha.
+- Métricas brutas iguais para todos os modelos. O corte de previsões negativas em zero é mostrado separadamente para a experiência de uso.
 
-### Valores ausentes
+O HTML calcula a mesma função que o pipeline final: uma previsão de referência mais contribuições independentes por campo. É uma decomposição aritmética **exata** da regressão ajustada. Ela explica o cálculo, não estabelece causalidade. O VIF numérico, as correlações e a redundância dos indicadores categóricos são discutidos no relatório.
 
-User_Score possui o texto tbd em alguns registros. Essa sigla significa que a nota ainda seria definida, então ela foi tratada como valor ausente.
+## Estrutura
 
-Os gráficos mostram que os dados ausentes aparecem mais em alguns anos e gêneros. Se todas essas linhas fossem removidas, a base poderia ficar concentrada em determinados tipos de jogo.
+| Local | Conteúdo |
+|---|---|
+| `src/games_analytics/core.py` | Dados, transformações, candidatos e avaliação |
+| `src/games_analytics/build.py` | Treino, diagnósticos e exportação do modelo para HTML |
+| `web/` | Fonte editável do HTML, CSS e JavaScript |
+| `index.html` | Entrega final offline, autossuficiente |
+| `games_analytics.ipynb`, `doc.md` | Análise acadêmica e narrativa atualizadas |
+| `tests/` | Paridade entre Python e JavaScript, além de verificações de dados |
 
-Por esse motivo, os registros foram mantidos. Os valores numéricos ausentes foram preenchidos pela mediana dentro do pipeline.
-
-### Distribuição das vendas
-
-A maior parte dos jogos vende pouco ou moderadamente. Poucos jogos, chamados de blockbusters, vendem muito acima da maioria.
-
-Esses jogos não foram removidos porque são casos reais. Porém, eles dificultam a modelagem, pois uma previsão errada para um blockbuster produz um erro muito alto.
-
-Também usamos gráficos em escala logarítmica para visualizar melhor os jogos comuns e os blockbusters no mesmo espaço.
-
-### Duplicatas
-
-Não foram encontradas linhas totalmente duplicadas. Alguns jogos aparecem mais de uma vez na mesma plataforma, mas possuem diferenças em outras colunas. Sem evidência de que sejam cópias, esses registros foram mantidos.
-
-## 3. Preparação dos dados
-
-### Variáveis removidas
-
-As colunas NA_Sales, EU_Sales, JP_Sales e Other_Sales foram retiradas dos preditores. Elas representam vendas regionais e sua soma forma Global_Sales.
-
-Se essas colunas fossem utilizadas, o modelo receberia praticamente a resposta que deveria estimar. Isso é chamado de vazamento de dados.
-
-Name também foi removida porque funciona como um identificador e possui muitos valores diferentes. O modelo poderia memorizar nomes específicos em vez de aprender padrões gerais.
-
-### Tratamentos utilizados
-
-- valores numéricos ausentes foram preenchidos pela mediana;
-- categorias foram transformadas em números com one-hot encoding;
-- variáveis numéricas foram padronizadas;
-- categorias muito raras de Publisher e Developer foram agrupadas;
-- Critic_Count e User_Count receberam versões em log para diminuir sua assimetria.
-
-Esses tratamentos foram colocados em um pipeline. Isso garante que as informações usadas no preenchimento e na padronização venham somente dos dados de treino.
-
-### Treino e teste
-
-A base foi dividida em:
-
-- 80% para treino e comparação dos modelos;
-- 20% para o teste final.
-
-O conjunto de teste ficou separado durante a escolha do modelo. Assim, ele representa melhor o comportamento em dados ainda não vistos.
-
-## 4. Modelos
-
-### Regressão linear
-
-A regressão linear tenta representar o alvo como uma soma de contribuições das variáveis:
-
-**vendas = intercepto + coeficiente × variável + erro**
-
-Na regressão simples usamos apenas uma variável. Na regressão múltipla usamos várias variáveis ao mesmo tempo.
-
-O método utilizado é o OLS, ou mínimos quadrados ordinários. Ele escolhe os coeficientes que deixam os erros quadráticos tão pequenos quanto possível.
-
-### Regressão polinomial
-
-Também testamos uma regressão polinomial com:
-
-- quadrado da nota da crítica;
-- quadrado da nota dos usuários;
-- interação entre as duas notas.
-
-Mesmo usando termos ao quadrado, o ajuste dos coeficientes continua sendo feito por OLS. Esses termos permitem que o modelo represente uma pequena curva.
-
-Não foram criadas todas as combinações possíveis, pois isso deixaria o modelo grande e difícil de interpretar.
-
-### Modelos comparados
-
-1. baseline usando a mediana;
-2. regressão simples com Critic_Count;
-3. regressão múltipla com variáveis básicas;
-4. regressão múltipla com Publisher e Developer;
-5. regressão múltipla com contagens em log;
-6. regressão com o alvo em log;
-7. regressão polinomial.
-
-## 5. Como os modelos foram comparados
-
-Foi utilizada validação cruzada com cinco divisões. Em cada repetição, o modelo treina em quatro partes e é avaliado na parte restante.
-
-As métricas utilizadas foram:
-
-- **MAE:** erro absoluto médio. É fácil de interpretar na unidade das vendas.
-- **RMSE:** também mede o erro, mas dá mais peso aos erros grandes.
-- **R²:** indica quanto da variação das vendas foi explicada pelo modelo.
-
-O RMSE foi escolhido como métrica principal porque os erros muito grandes, principalmente nos blockbusters, são importantes para o problema.
-
-### Resultados da validação
-
-| Modelo | RMSE médio | MAE médio | R² médio |
-|---|---:|---:|---:|
-| Regressão polinomial | 1,201 | 0,497 | 0,264 |
-| **Regressão múltipla com contagens em log** | **1,207** | **0,500** | **0,257** |
-| Múltipla com Publisher e Developer | 1,212 | 0,487 | 0,251 |
-| Alvo em log | 1,212 | 0,388 | 0,250 |
-| Regressão múltipla base | 1,266 | 0,503 | 0,183 |
-| Regressão simples | 1,343 | 0,529 | 0,079 |
-| Baseline | 1,444 | 0,457 | -0,065 |
-
-A regressão polinomial apresentou o menor RMSE, mas a diferença foi de apenas 0,006. Essa diferença é bem menor que a variação observada entre as divisões da validação.
-
-Por isso, escolhemos a regressão múltipla com contagens em log. Ela apresentou resultado muito parecido e é mais simples de explicar.
-
-## 6. Resultado no teste
-
-Depois da escolha, o modelo foi treinado novamente usando todo o conjunto de treino e aplicado ao teste.
-
-| Previsão | RMSE | MAE | R² |
-|---|---:|---:|---:|
-| Original | 1,7968 | 0,5297 | 0,2179 |
-| Limitada a zero | 1,7900 | 0,4945 | 0,2238 |
-
-O MAE de 0,4945 significa que o erro absoluto médio ficou próximo de 0,49 milhão de unidades.
-
-O R² de 0,2238 indica que o modelo explicou cerca de 22% da variação das vendas no teste. Esse resultado é melhor que o baseline, mas também mostra que boa parte das vendas depende de informações que não estão na base.
-
-### Previsões negativas
-
-A regressão linear pode produzir valores negativos, mesmo que vendas negativas não existam. Isso aconteceu em 539 registros do teste.
-
-Para o resultado final, essas previsões foram limitadas a zero. As métricas antes do ajuste também foram mantidas para deixar essa limitação visível.
-
-### Análise dos erros
-
-Os gráficos de resíduos mostram que os maiores erros acontecem principalmente nos jogos com vendas muito altas. O modelo funciona melhor para jogos próximos do padrão geral da base.
-
-Também foram analisados erros por gênero, plataforma e faixa de vendas. Isso ajuda a identificar grupos em que o modelo tem mais dificuldade.
-
-## 7. OLS com statsmodels
-
-O LinearRegression do scikit-learn já utiliza OLS. Também foi criado um modelo menor com statsmodels para conferir o funcionamento do método com um conjunto reduzido de variáveis.
-
-Esse modelo utiliza apenas as variáveis numéricas e o alvo em log. O resultado foi:
-
-| Métrica | Resultado |
-|---|---:|
-| R² ajustado no treino | 0,2242 |
-| RMSE no teste | 1,9789 |
-| MAE no teste | 0,4867 |
-| R² no teste | 0,0514 |
-
-O modelo reduzido teve resultado inferior ao modelo principal. Isso era esperado, pois ele utiliza menos informações. Ele foi mantido apenas como uma comparação adicional entre uma versão simples do OLS e o pipeline completo.
-
-O resultado não muda a escolha final: a regressão múltipla com contagens em log continua sendo o modelo principal, pois apresentou RMSE e R² melhores no teste.
-
-## 8. Principais conclusões
-
-- A regressão simples superou pouco o baseline, mostrando que uma única variável não é suficiente.
-- A regressão múltipla melhorou o resultado ao combinar avaliações e características dos jogos.
-- A transformação em log ajudou nas variáveis de contagem.
-- A regressão polinomial teve o melhor RMSE médio, mas sua vantagem foi muito pequena.
-- O modelo final explicou cerca de 22% da variação das vendas no teste.
-- Os blockbusters continuam sendo os casos mais difíceis.
-- Informações como marketing, orçamento e força da franquia provavelmente ajudariam o modelo.
-
-O projeto mostra que não basta escolher automaticamente o menor erro. Também é importante verificar se a melhora é relevante, analisar os erros e considerar se o modelo continua compreensível.
+O projeto foi desenvolvido com scikit-learn. Não há API, servidor nem rastreamento de visitantes.

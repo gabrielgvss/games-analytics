@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101222">
+  <title>Game Sales Lab — explore vendas de videogames</title>
+  <meta name="description" content="Escolha um jogo, mude suas características e entenda o que um modelo histórico de vendas consegue — e não consegue — mostrar.">
+  <style>/*__STYLE__*/</style>
+</head>
+<body>
+  <a class="skip" href="#explorar">Ir para a experiência</a>
+  <header class="topbar shell">
+    <a class="brand" href="#inicio" aria-label="Game Sales Lab, início"><span class="brand-mark" aria-hidden="true">✚</span> GAME SALES <b>LAB</b></a>
+    <nav aria-label="Navegação"><a href="#explorar">Explorar</a><a href="#aprendizados">O que aprendemos</a></nav>
+    <span class="top-label">PLAY / ANALYZE</span>
+  </header>
+
+  <main>
+    <section class="hero shell" id="inicio">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="blink" aria-hidden="true"></span> MODO EXPLORAÇÃO ATIVADO</p>
+        <h1>Vendas de jogos.<br><em>Sem bola de cristal.</em></h1>
+        <p>Comece por um jogo que já vendeu. Compare o resultado real com a estimativa e veja o que mais pesou. Depois, teste uma mudança e acompanhe como o palpite se altera.</p>
+        <a class="cta" href="#explorar">Começar a explorar <span aria-hidden="true">↗</span></a>
+        <small>Dados históricos · 16.719 jogos em diferentes plataformas · funciona offline</small>
+      </div>
+      <div class="arcade-art" aria-hidden="true"><div class="arcade-screen"><div class="screen-top"><span>GAME SALES LAB</span><span>● ● ●</span></div><div class="screen-pixels"><span class="pixel p1"></span><span class="pixel p2"></span><span class="pixel p3"></span><span class="pixel p4"></span><span class="pixel p5"></span><span class="pixel p6"></span><span class="pixel p7"></span><span class="pixel p8"></span><span class="pixel p9"></span><span class="pixel p10"></span><span class="pixel p11"></span><span class="pixel p12"></span><strong>?</strong></div><div class="screen-bottom"><span>01 / DADOS</span><span>PRESSIONE START →</span></div></div><div class="arcade-shadow"></div></div>
+    </section>
+
+    <section class="explore" id="explorar"><div class="shell explore-inner">
+      <div class="section-heading"><span class="step">01 / JOGUE COM OS DADOS</span><h2>Qual jogo você quer explorar?</h2><p>Busque pelo nome ou comece por um dos exemplos. O catálogo reúne <strong id="catalog-count">—</strong> jogos reais que foram guardados para conferir o modelo.</p></div>
+
+      <div class="search-block"><label for="game-search">BUSCAR JOGO</label><div class="search-input-wrap"><span aria-hidden="true">⌕</span><input id="game-search" type="search" autocomplete="off" placeholder="Digite um título, plataforma ou ano" aria-controls="search-results" aria-expanded="false"><kbd>ESC</kbd></div><div id="search-results" class="search-results" role="listbox" hidden></div><div id="quick-games" class="quick-games" aria-label="Jogos sugeridos"></div></div>
+
+      <div class="play-grid">
+        <div class="result-panel" aria-live="polite"><div class="panel-top"><span>01 / ESTIMATIVA</span><span class="status-light">DADO HISTÓRICO</span></div><p class="game-name" id="selected-title">Escolha um jogo</p><div class="big-number"><strong id="prediction">—</strong><span>milhões de<br>unidades estimadas</span></div><p class="result-copy" id="result-summary">Escolha um jogo para começar a exploração.</p><p class="scenario-story" id="scenario-story" hidden></p><div class="comparison" id="comparison" hidden><div class="bar-label"><span id="pred-caption">ESTIMATIVA</span><b id="pred-label">—</b></div><div class="track"><i id="pred-bar"></i></div><div class="bar-label"><span>VENDAS REAIS</span><b id="actual-label">—</b></div><div class="track real"><i id="actual-bar"></i></div></div><p class="context-note" id="result-warning" hidden></p></div>
+
+        <div class="explain-panel"><div class="panel-top"><span id="explain-step">01 / POR TRÁS DO PALPITE</span><span aria-hidden="true">↗ ↘</span></div><h3 id="explain-title">O que mais pesou?</h3><p id="explain-intro">Veja quais informações mais afastam a estimativa de um jogo típico.</p><div id="drivers" class="drivers"></div><p class="explain-foot">As barras explicam <strong>como o cálculo mudou</strong>. Elas não mostram causas nem garantem o mesmo resultado em outro jogo.</p></div>
+      </div>
+
+      <details class="edit-panel" id="edit-details"><summary><span><b>02</b> Testar uma hipótese: o que muda se…</span><span class="summary-hint">ABRIR ↓</span></summary><div class="edit-inner"><p>Escolha uma variável e mude o valor. O resultado mostra quanto essa alteração deslocou a estimativa do jogo escolhido. Você pode mudar mais campos, mas uma variável por vez deixa a comparação mais fácil de entender.</p><form id="game-form"><div class="field-grid">
+        <label>Ano de lançamento<input id="Year_of_Release" type="number" min="1970" max="2035" step="1" placeholder="Ex.: 2008"></label>
+        <label>Plataforma<input id="Platform" list="list-Platform" autocomplete="off" placeholder="Ex.: Wii"><datalist id="list-Platform"></datalist></label>
+        <label>Gênero<input id="Genre" list="list-Genre" autocomplete="off" placeholder="Ex.: Sports"><datalist id="list-Genre"></datalist></label>
+        <label>Classificação indicativa<input id="Rating" list="list-Rating" autocomplete="off" placeholder="Ex.: E"><datalist id="list-Rating"></datalist></label>
+        <label>Nota da crítica <span>0 a 100</span><input id="Critic_Score" type="number" min="0" max="100" step="1" placeholder="Ex.: 82"></label>
+        <label>Quantidade de críticas<input id="Critic_Count" type="number" min="0" step="1" placeholder="Ex.: 45"></label>
+        <label>Nota do público <span>0 a 10</span><input id="User_Score" type="number" min="0" max="10" step="0.1" placeholder="Ex.: 8.2"></label>
+        <label>Quantidade de avaliações<input id="User_Count" type="number" min="0" step="1" placeholder="Ex.: 250"></label>
+        <label>Empresa que publicou<input id="Publisher" list="list-Publisher" autocomplete="off" placeholder="Ex.: Nintendo"><datalist id="list-Publisher"></datalist></label>
+        <label>Estúdio criador<input id="Developer" list="list-Developer" autocomplete="off" placeholder="Ex.: Nintendo"><datalist id="list-Developer"></datalist></label>
+      </div><button id="clear-btn" type="reset">Recomeçar cenário ↺</button></form><p class="edit-disclaimer">Notas e avaliações normalmente só existem depois do lançamento. Esta experiência compara padrões históricos; não prevê vendas antes de o jogo chegar ao mercado.</p></div></details>
+    </div></section>
+
+    <section class="lessons shell" id="aprendizados"><div class="section-heading"><span class="step">03 / O QUE APRENDEMOS</span><h2>O palpite muda conforme o tipo de jogo.</h2><p>Esses exemplos mostram onde a estimativa pode ajudar a comparar e onde pode enganar.</p></div><div class="lesson-grid"><article><span class="lesson-icon">▰▰▰</span><span class="lesson-number">A</span><h3>Jogos pequenos podem parecer grandes demais.</h3><p id="small-games-copy"></p></article><article><span class="lesson-icon">★</span><span class="lesson-number">B</span><h3>Um grande sucesso surpreende o modelo.</h3><p id="hit-copy"></p></article><article><span class="lesson-icon">?</span><span class="lesson-number">C</span><h3>Faltam peças importantes do negócio.</h3><p>Marketing, investimento e força da franquia não estão nos dados. Use a estimativa para explorar padrões, nunca como meta de vendas ou decisão de investimento.</p></article></div>
+      <details class="method"><summary>Como conferimos se o modelo funciona? <span>+</span></summary><div class="method-body"><p>Primeiro, reservamos um grupo de jogos que o modelo não viu enquanto aprendia. Comparamos várias formas de fazer a conta usando apenas os outros jogos e escolhemos a que equilibrava resultado e simplicidade. Só então conferimos a escolhida no grupo reservado.</p><p id="method-copy"></p><p>Também verificamos se características parecidas carregam informação repetida. As notas da crítica e do público, por exemplo, tendem a andar juntas. Por isso, as barras da experiência mostram partes do cálculo, não causas independentes.</p></div></details>
+    </section>
+  </main>
+
+  <footer><div class="shell footer-inner"><div><strong>GAME SALES LAB <span>✚</span></strong><p>Uma exploração honesta de dados de videogames.</p></div><p>Análise original: Gabriel Silveira e Marcos Reis<br>Evolução para portfólio: Gabriel Silveira</p><a href="#inicio">VOLTAR AO TOPO ↑</a></div></footer>
+  <script>const PAYLOAD=/*__DATA__*/;</script>
+  <script>/*__SCRIPT__*/</script>
+</body>
+</html>
