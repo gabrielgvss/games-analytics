@@ -124,13 +124,38 @@ function showDrivers(effects, scenario = false) {
   if (!biggest.length) {
     const empty = document.createElement("p"); empty.textContent = scenario ? "Essa mudança quase não alterou a estimativa." : "Escolha um jogo para ver o que mais pesou na estimativa."; container.append(empty); return;
   }
+  const scale = document.createElement("div"); scale.className = "drivers-scale"; scale.setAttribute("aria-hidden", "true");
+  const scaleDown = document.createElement("span"); scaleDown.textContent = "REDUZ O PALPITE";
+  const scaleCenter = document.createElement("b"); scaleCenter.textContent = scenario ? "SEM A MUDANÇA" : "JOGO TÍPICO";
+  const scaleUp = document.createElement("span"); scaleUp.textContent = "ELEVA O PALPITE";
+  scale.append(scaleDown, scaleCenter, scaleUp); container.append(scale);
+
+  const maxEffect = Math.max(...biggest.map(([,value]) => Math.abs(value)), .01);
   for (const [field, effect] of biggest) {
     const row = document.createElement("div"); row.className = "driver";
+    const head = document.createElement("div"); head.className = "driver-head";
     const name = document.createElement("strong"); name.textContent = labels[field];
     const value = document.createElement("span"); value.className = effect >= 0 ? "up" : "down"; value.textContent = `${effect >= 0 ? "+" : "−"}${pt(Math.abs(effect))} mi`;
+    head.append(name, value);
+
+    const chart = document.createElement("div"); chart.className = "driver-chart"; chart.setAttribute("role", "img");
+    chart.setAttribute("aria-label", `${labels[field]} ${effect >= 0 ? "elevou" : "reduziu"} a estimativa em ${pt(Math.abs(effect))} milhão${Math.abs(effect) === 1 ? "" : "ões"}.`);
+    const downSide = document.createElement("div"); downSide.className = "driver-side driver-side-down";
+    const upSide = document.createElement("div"); upSide.className = "driver-side driver-side-up";
+    const bar = document.createElement("i"); bar.className = effect >= 0 ? "driver-bar driver-bar-up" : "driver-bar driver-bar-down";
+    bar.style.width = `${Math.max(4, Math.abs(effect) / maxEffect * 100)}%`;
+    (effect >= 0 ? upSide : downSide).append(bar); chart.append(downSide, upSide);
+
     const description = document.createElement("small"); description.textContent = scenario ? (effect >= 0 ? "A mudança elevou o palpite" : "A mudança reduziu o palpite") : (effect >= 0 ? "Elevou o palpite frente a um jogo típico" : "Reduziu o palpite frente a um jogo típico");
-    row.append(name, value, description); container.append(row);
+    row.append(head, chart, description); container.append(row);
   }
+
+  const [mainField, mainEffect] = biggest[0];
+  const story = document.createElement("p"); story.className = "driver-story";
+  story.textContent = scenario
+    ? `${labels[mainField]} foi a mudança que mais mexeu no resultado, puxando o novo palpite ${mainEffect >= 0 ? "para cima" : "para baixo"}.`
+    : `${labels[mainField]} foi o fator com maior peso neste caso, puxando a estimativa ${mainEffect >= 0 ? "para cima" : "para baixo"} em relação a um jogo típico.`;
+  container.append(story);
 }
 
 function update() {

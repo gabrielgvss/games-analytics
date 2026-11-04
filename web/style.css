@@ -15,3 +15,113 @@
 @media(max-width:900px){.arcade-art{order:0}.hero{gap:5px}.field-grid{gap:16px}}
 @media(max-width:620px){.big-number strong{font-size:clamp(52px,15vw,76px)}.quick-games button,#clear-btn{min-height:44px}.search-results button{min-height:50px}.arcade-art{min-height:180px}.arcade-screen{transform:rotate(-4deg) scale(.58)}.hero{padding-bottom:55px}}
 @media(max-width:380px){.brand{font-size:10px}.topbar nav a{font-size:9px}.topbar nav{gap:8px}.summary-hint{display:none}.field-grid{gap:12px 8px}}
+
+/* Responsive layout: prevent grid children and long labels from forcing overflow. */
+img,svg,canvas{max-width:100%}
+.hero>*,.play-grid>*,.lesson-grid>*,.footer-inner>*{min-width:0}
+.search-results,.edit-panel,.result-panel,.explain-panel,.lesson-grid article{max-width:100%}
+.game-name,.result-copy,.scenario-story,.context-note,.driver small,.lesson-grid h3,.lesson-grid p{overflow-wrap:anywhere}
+
+@media (max-width: 760px){
+  .shell{width:min(100% - 36px, 620px)}
+  .topbar{height:auto;min-height:64px;gap:12px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px}
+  .topbar nav{gap:clamp(10px,4vw,24px);margin-left:auto}
+  .topbar nav a{display:inline-flex;align-items:center;min-height:40px;font-size:11px}
+  .hero{grid-template-columns:minmax(0,1fr);gap:12px;min-height:0;padding-top:38px;padding-bottom:58px}
+  .hero-copy{max-width:100%}
+  .hero h1{font-size:clamp(42px,9vw,64px);overflow-wrap:anywhere}
+  .arcade-art{min-height:220px;order:0}
+  .arcade-screen{width:min(360px,82vw);transform:rotate(-3deg) scale(.82)}
+  .arcade-shadow{width:min(300px,72vw)}
+  .play-grid{grid-template-columns:minmax(0,1fr);gap:14px}
+  .result-panel,.explain-panel{padding:clamp(18px,4vw,26px)}
+  .field-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 12px}
+  .lesson-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .lesson-grid article{padding:18px}
+  .footer-inner{flex-wrap:wrap}
+}
+
+@media (max-width: 480px){
+  .shell{width:calc(100% - 32px)}
+  .topbar{align-items:flex-start}
+  .brand{font-size:11px}
+  .topbar nav{width:100%;justify-content:space-between;margin:0;gap:8px}
+  .topbar nav a{font-size:11px}
+  .hero{padding-top:30px;padding-bottom:46px}
+  .eyebrow{font-size:10px;margin-bottom:17px}
+  .hero h1{font-size:clamp(39px,11vw,52px)}
+  .hero-copy>p:not(.eyebrow){font-size:15px}
+  .arcade-art{min-height:185px;margin:0 -8px}
+  .arcade-screen{height:250px;transform:rotate(-3deg) scale(.68)}
+  .screen-pixels{height:150px}
+  .explore-inner,.lessons{padding-top:54px;padding-bottom:58px}
+  .section-heading h2{font-size:clamp(30px,8vw,38px)}
+  .search-input-wrap{height:54px}
+  .search-input-wrap>span{font-size:26px;padding:0 9px}
+  .search-input-wrap input{font-size:16px}
+  .search-results{top:84px;max-height:min(55vh,330px)}
+  .search-results button{min-height:48px;flex-direction:column;align-items:flex-start;gap:2px;padding:9px 12px}
+  .search-results button small{white-space:normal}
+  .quick-games button{min-height:42px}
+  .big-number{gap:10px;flex-wrap:wrap}
+  .big-number strong{font-size:clamp(54px,16vw,76px)}
+  .big-number span{padding-bottom:7px}
+  .panel-top{font-size:9px;gap:8px;flex-wrap:wrap}
+  .edit-panel summary{align-items:flex-start;gap:8px;padding:15px;font-size:13px}
+  .edit-panel summary>span:first-child{min-width:0}
+  .summary-hint{white-space:nowrap;font-size:9px}
+  .edit-inner{padding:0 14px 18px}
+  .field-grid{grid-template-columns:minmax(0,1fr);gap:12px}
+  .field-grid label{font-size:12px}
+  .field-grid input{min-height:46px;font-size:16px}
+  #clear-btn{width:100%;min-height:46px}
+  .lesson-grid{grid-template-columns:minmax(0,1fr)}
+  .lesson-grid article{min-height:0}
+  .lesson-icon{margin-bottom:18px}
+  .method summary{gap:12px;font-size:13px}
+  .footer-inner{flex-direction:column;gap:12px}
+  .footer-inner a{align-self:flex-start;min-height:40px;display:flex;align-items:center}
+}
+
+@media (max-width: 360px){
+  .shell{width:calc(100% - 24px)}
+  .brand{font-size:10px;letter-spacing:0}
+  .brand-mark{width:25px;height:25px;margin-right:2px}
+  .topbar nav a{font-size:10px}
+  .hero h1{font-size:38px}
+  .quick-games{gap:7px}
+  .quick-games button{padding:8px}
+  .result-panel,.explain-panel{padding:16px}
+  .edit-panel summary{font-size:12px}
+}
+
+/* Story chart for the factors behind each estimate. */
+.drivers{margin:22px 0 18px}
+.drivers-scale{display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:8px;margin-bottom:6px;color:#8994a8;font:700 9px var(--mono);letter-spacing:.055em}
+.drivers-scale span:last-child{text-align:right}
+.drivers-scale b{color:#dce2e8;font-size:9px;text-align:center}
+.driver{display:block;padding:12px 0 13px;border-bottom:1px solid #3c445b}
+.driver-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:7px}
+.driver-head strong{min-width:0;font-size:13px;overflow-wrap:anywhere}
+.driver-head span{flex:none;font:700 12px var(--mono)}
+.driver-head span.up{color:var(--lime)}
+.driver-head span.down{color:var(--coral)}
+.driver-chart{display:grid;grid-template-columns:1fr 1fr;height:18px;position:relative;background:linear-gradient(to right,transparent calc(50% - 1px),#778197 calc(50% - 1px),#778197 calc(50% + 1px),transparent calc(50% + 1px))}
+.driver-side{display:flex;align-items:center;min-width:0}
+.driver-side-down{justify-content:flex-end;padding-right:1px}
+.driver-side-up{justify-content:flex-start;padding-left:1px}
+.driver-bar{display:block;height:10px;min-width:4px;transition:width .3s ease}
+.driver-bar-up{background:var(--lime);box-shadow:2px 2px 0 #536e31}
+.driver-bar-down{background:var(--coral);box-shadow:-2px 2px 0 #9a473d}
+.driver small{display:block;margin-top:6px;color:#aeb8c9;font-size:11px;line-height:1.45}
+.driver-story{margin:15px 0 0!important;padding:11px 12px;border-left:3px solid var(--blue);background:#293047;color:#e1e6ef!important;font-size:12px!important;line-height:1.55}
+
+@media(max-width:480px){
+  .drivers-scale{font-size:8px;letter-spacing:.025em;gap:5px}
+  .drivers-scale b{font-size:8px;max-width:72px;line-height:1.2}
+  .driver-head{gap:8px}
+  .driver-chart{height:20px}
+  .driver-bar{height:12px}
+}
+
+@media(prefers-reduced-motion:reduce){.driver-bar{transition:none}}
