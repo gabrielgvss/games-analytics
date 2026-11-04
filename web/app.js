@@ -125,9 +125,9 @@ function showDrivers(effects, scenario = false) {
     const empty = document.createElement("p"); empty.textContent = scenario ? "Essa mudança quase não alterou a estimativa." : "Escolha um jogo para ver o que mais pesou na estimativa."; container.append(empty); return;
   }
   const scale = document.createElement("div"); scale.className = "drivers-scale"; scale.setAttribute("aria-hidden", "true");
-  const scaleDown = document.createElement("span"); scaleDown.textContent = "REDUZ O PALPITE";
+  const scaleDown = document.createElement("span"); scaleDown.textContent = "REDUZ A PREVISÃO";
   const scaleCenter = document.createElement("b"); scaleCenter.textContent = scenario ? "SEM A MUDANÇA" : "JOGO TÍPICO";
-  const scaleUp = document.createElement("span"); scaleUp.textContent = "ELEVA O PALPITE";
+  const scaleUp = document.createElement("span"); scaleUp.textContent = "ELEVA A PREVISÃO";
   scale.append(scaleDown, scaleCenter, scaleUp); container.append(scale);
 
   const maxEffect = Math.max(...biggest.map(([,value]) => Math.abs(value)), .01);
@@ -146,14 +146,14 @@ function showDrivers(effects, scenario = false) {
     bar.style.width = `${Math.max(4, Math.abs(effect) / maxEffect * 100)}%`;
     (effect >= 0 ? upSide : downSide).append(bar); chart.append(downSide, upSide);
 
-    const description = document.createElement("small"); description.textContent = scenario ? (effect >= 0 ? "A mudança elevou o palpite" : "A mudança reduziu o palpite") : (effect >= 0 ? "Elevou o palpite frente a um jogo típico" : "Reduziu o palpite frente a um jogo típico");
+    const description = document.createElement("small"); description.textContent = scenario ? (effect >= 0 ? "A mudança elevou a previsão" : "A mudança reduziu a previsão") : (effect >= 0 ? "Elevou a previsão frente a um jogo típico" : "Reduziu a previsão frente a um jogo típico");
     row.append(head, chart, description); container.append(row);
   }
 
   const [mainField, mainEffect] = biggest[0];
   const story = document.createElement("p"); story.className = "driver-story";
   story.textContent = scenario
-    ? `${labels[mainField]} foi a mudança que mais mexeu no resultado, puxando o novo palpite ${mainEffect >= 0 ? "para cima" : "para baixo"}.`
+    ? `${labels[mainField]} foi a mudança que mais mexeu no resultado, puxando a nova previsão ${mainEffect >= 0 ? "para cima" : "para baixo"}.`
     : `${labels[mainField]} foi o fator com maior peso neste caso, puxando a estimativa ${mainEffect >= 0 ? "para cima" : "para baixo"} em relação a um jogo típico.`;
   container.append(story);
 }
@@ -179,7 +179,7 @@ function updateScenarioMonitor(result, game, sourceGame) {
   byId("scenario-delta").textContent = `${delta > 0 ? "+" : delta < 0 ? "−" : ""}${pt(Math.abs(delta))} mi`;
   byId("scenario-delta").className = delta > 0 ? "up" : delta < 0 ? "down" : "";
   byId("scenario-monitor-story").textContent = sourceGame
-    ? `Com as alterações, o palpite ficou ${pt(Math.abs(delta))} ${Math.abs(delta) === 1 ? "milhão" : "milhões"} ${delta > 0 ? "acima" : delta < 0 ? "abaixo" : "igual ao"} original.`
+    ? `Com as alterações, a previsão ficou ${pt(Math.abs(delta))} ${Math.abs(delta) === 1 ? "milhão" : "milhões"} ${delta > 0 ? "acima da" : delta < 0 ? "abaixo da" : "igual à"} previsão original.`
     : "Este é o ponto de partida. Altere um campo para comparar o efeito imediatamente.";
 }
 
@@ -229,15 +229,15 @@ function update() {
     const deltas = Object.fromEntries(fields.map(field => [field, result.contributions[field] - original.contributions[field]]));
     showDrivers(deltas, true);
     byId("explain-step").textContent = "02 / IMPACTO DA MUDANÇA";
-    byId("explain-title").textContent = "O que mudou no palpite?";
+    byId("explain-title").textContent = "O que mudou na previsão?";
     byId("explain-intro").textContent = "Cada linha mostra quanto uma alteração deslocou a estimativa, mantendo os outros dados do jogo.";
     const change = result.clipped - original.clipped;
     scenarioStory.textContent = changes.length
-      ? `Você mudou ${changes.map(field => labels[field]).join(", ")}. O palpite passou de ${pt(original.clipped)} para ${pt(result.clipped)} milhões${change === 0 ? "." : ` (${change > 0 ? "+" : "−"}${pt(Math.abs(change))} milhões).`}`
+      ? `Você mudou ${changes.map(field => labels[field]).join(", ")}. A previsão passou de ${pt(original.clipped)} para ${pt(result.clipped)} milhões${change === 0 ? "." : ` (${change > 0 ? "+" : "−"}${pt(Math.abs(change))} milhões).`}`
       : "Os dados continuam iguais aos do jogo selecionado. Mude uma variável abaixo para testar uma hipótese.";
     scenarioStory.hidden = false;
   } else {
-    byId("explain-step").textContent = "01 / POR TRÁS DO PALPITE";
+    byId("explain-step").textContent = "01 / POR TRÁS DA PREVISÃO";
     byId("explain-title").textContent = "O que mais pesou?";
     byId("explain-intro").textContent = "Veja quais informações mais afastam a estimativa de um jogo típico.";
     showDrivers(result.contributions);
@@ -250,7 +250,7 @@ function update() {
     const max = Math.max(comparisonGame.actual, result.clipped, .01);
     byId("pred-bar").style.width = `${Math.max(1, result.clipped / max * 100)}%`;
     byId("actual-bar").style.width = `${Math.max(1, comparisonGame.actual / max * 100)}%`;
-    byId("pred-caption").textContent = sourceGame ? "NOVO PALPITE" : "ESTIMATIVA";
+    byId("pred-caption").textContent = sourceGame ? "NOVA PREVISÃO" : "ESTIMATIVA";
     byId("pred-label").textContent = `${pt(result.clipped)} mi`;
     byId("actual-label").textContent = `${pt(comparisonGame.actual)} mi`;
     byId("comparison").hidden = false;

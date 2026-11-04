@@ -199,7 +199,7 @@ img,svg,canvas{max-width:100%}
       <div class="hero-copy">
         <p class="eyebrow"><span class="blink" aria-hidden="true"></span> MODO EXPLORAÇÃO ATIVADO</p>
         <h1>Vendas de jogos.<br><em>Sem bola de cristal.</em></h1>
-        <p>Comece por um jogo que já vendeu. Compare o resultado real com a estimativa e veja o que mais pesou. Depois, teste uma mudança e acompanhe como o palpite se altera.</p>
+        <p>Comece por um jogo que já vendeu. Compare o resultado real com a estimativa e veja o que mais pesou. Depois, teste uma mudança e acompanhe como a previsão se altera.</p>
         <a class="cta" href="#explorar">Começar a explorar <span aria-hidden="true">↗</span></a>
         <small>Dados históricos · 16.719 jogos em diferentes plataformas · funciona offline</small>
       </div>
@@ -214,10 +214,10 @@ img,svg,canvas{max-width:100%}
       <div class="play-grid">
         <div class="result-panel" aria-live="polite"><div class="panel-top"><span>01 / ESTIMATIVA</span><span class="status-light">DADO HISTÓRICO</span></div><p class="game-name" id="selected-title">Escolha um jogo</p><div class="big-number"><strong id="prediction">—</strong><span>milhões de<br>unidades estimadas</span></div><p class="result-copy" id="result-summary">Escolha um jogo para começar a exploração.</p><p class="scenario-story" id="scenario-story" hidden></p><div class="comparison" id="comparison" hidden><div class="bar-label"><span id="pred-caption">ESTIMATIVA</span><b id="pred-label">—</b></div><div class="track"><i id="pred-bar"></i></div><div class="bar-label"><span>VENDAS REAIS</span><b id="actual-label">—</b></div><div class="track real"><i id="actual-bar"></i></div></div><p class="context-note" id="result-warning" hidden></p></div>
 
-        <div class="explain-panel"><div class="panel-top"><span id="explain-step">01 / POR TRÁS DO PALPITE</span><span aria-hidden="true">↗ ↘</span></div><h3 id="explain-title">O que mais pesou?</h3><p id="explain-intro">Veja quais informações mais afastam a estimativa de um jogo típico.</p><div id="drivers" class="drivers"></div><p class="explain-foot">Cada barra compara o impacto dos fatores na <strong>mesma escala</strong>: esquerda reduz, direita eleva. Isso explica o cálculo, não uma relação de causa.</p></div>
+        <div class="explain-panel"><div class="panel-top"><span id="explain-step">01 / POR TRÁS DA PREVISÃO</span><span aria-hidden="true">↗ ↘</span></div><h3 id="explain-title">O que mais pesou?</h3><p id="explain-intro">Veja quais informações mais afastam a estimativa de um jogo típico.</p><div id="drivers" class="drivers"></div><p class="explain-foot">Cada barra compara o impacto dos fatores na <strong>mesma escala</strong>: esquerda reduz, direita eleva. Isso explica o cálculo, não uma relação de causa.</p></div>
       </div>
 
-      <details class="edit-panel" id="edit-details"><summary><span><b>02</b><span class="summary-title-long"> Testar uma hipótese: o que muda se…</span><span class="summary-title-short"> Mudar dados do jogo</span></span><span class="summary-hint">EDITAR ↓</span></summary><div class="edit-inner"><p>Altere uma informação e acompanhe o novo palpite ao lado. Uma mudança por vez deixa a comparação mais fácil de entender.</p><div class="edit-workspace"><form id="game-form"><div class="field-grid">
+      <details class="edit-panel" id="edit-details"><summary><span><b>02</b><span class="summary-title-long"> Testar uma hipótese: o que muda se…</span><span class="summary-title-short"> Mudar dados do jogo</span></span><span class="summary-hint">EDITAR ↓</span></summary><div class="edit-inner"><p>Altere uma informação e acompanhe a nova previsão ao lado. Uma mudança por vez deixa a comparação mais fácil de entender.</p><div class="edit-workspace"><form id="game-form"><div class="field-grid">
         <label>Ano de lançamento<input id="Year_of_Release" type="number" min="1970" max="2035" step="1" placeholder="Ex.: 2008"></label>
         <label>Plataforma<input id="Platform" list="list-Platform" autocomplete="off" placeholder="Ex.: Wii"><datalist id="list-Platform"></datalist></label>
         <label>Gênero<input id="Genre" list="list-Genre" autocomplete="off" placeholder="Ex.: Sports"><datalist id="list-Genre"></datalist></label>
@@ -228,10 +228,10 @@ img,svg,canvas{max-width:100%}
         <label>Quantidade de avaliações<input id="User_Count" type="number" min="0" step="1" placeholder="Ex.: 250"></label>
         <label>Empresa que publicou<input id="Publisher" list="list-Publisher" autocomplete="off" placeholder="Ex.: Nintendo"><datalist id="list-Publisher"></datalist></label>
         <label>Estúdio criador<input id="Developer" list="list-Developer" autocomplete="off" placeholder="Ex.: Nintendo"><datalist id="list-Developer"></datalist></label>
-      </div><div class="scenario-actions"><button id="restore-btn" type="button">Desfazer alterações ↺</button><button id="clear-btn" type="button">Limpar todos os campos</button></div></form><aside class="scenario-monitor" aria-live="polite"><span class="scenario-kicker">RESULTADO DA HIPÓTESE</span><p id="scenario-game">Jogo selecionado</p><div class="scenario-live-number"><strong id="scenario-prediction">—</strong><span>milhões de<br>unidades estimadas</span></div><div class="scenario-metrics"><div><span>ANTES</span><b id="scenario-original">—</b></div><div><span>MUDANÇA</span><b id="scenario-delta">—</b></div></div><p id="scenario-monitor-story">Altere um campo para comparar com o palpite original.</p></aside></div><p class="edit-disclaimer">Notas e avaliações normalmente só existem depois do lançamento. Esta experiência compara padrões históricos; não prevê vendas antes de o jogo chegar ao mercado.</p></div></details>
+      </div><div class="scenario-actions"><button id="restore-btn" type="button">Desfazer alterações ↺</button><button id="clear-btn" type="button">Limpar todos os campos</button></div></form><aside class="scenario-monitor" aria-live="polite"><span class="scenario-kicker">RESULTADO DA HIPÓTESE</span><p id="scenario-game">Jogo selecionado</p><div class="scenario-live-number"><strong id="scenario-prediction">—</strong><span>milhões de<br>unidades estimadas</span></div><div class="scenario-metrics"><div><span>ANTES</span><b id="scenario-original">—</b></div><div><span>MUDANÇA</span><b id="scenario-delta">—</b></div></div><p id="scenario-monitor-story">Altere um campo para comparar com a previsão original.</p></aside></div><p class="edit-disclaimer">Notas e avaliações normalmente só existem depois do lançamento. Esta experiência compara padrões históricos; não prevê vendas antes de o jogo chegar ao mercado.</p></div></details>
     </div></section>
 
-    <section class="lessons shell" id="aprendizados"><div class="section-heading"><span class="step">03 / O QUE APRENDEMOS</span><h2>O palpite muda conforme o tipo de jogo.</h2><p>Esses exemplos mostram onde a estimativa pode ajudar a comparar e onde pode enganar.</p></div><div class="lesson-grid"><article><span class="lesson-icon">▰▰▰</span><span class="lesson-number">A</span><h3>Jogos pequenos podem parecer grandes demais.</h3><p id="small-games-copy"></p></article><article><span class="lesson-icon">★</span><span class="lesson-number">B</span><h3>Um grande sucesso surpreende o modelo.</h3><p id="hit-copy"></p></article><article><span class="lesson-icon">?</span><span class="lesson-number">C</span><h3>Faltam peças importantes do negócio.</h3><p>Marketing, investimento e força da franquia não estão nos dados. Use a estimativa para explorar padrões, nunca como meta de vendas ou decisão de investimento.</p></article></div>
+    <section class="lessons shell" id="aprendizados"><div class="section-heading"><span class="step">03 / O QUE APRENDEMOS</span><h2>A previsão muda conforme o tipo de jogo.</h2><p>Esses exemplos mostram onde a estimativa pode ajudar a comparar e onde pode enganar.</p></div><div class="lesson-grid"><article><span class="lesson-icon">▰▰▰</span><span class="lesson-number">A</span><h3>Jogos pequenos podem parecer grandes demais.</h3><p id="small-games-copy"></p></article><article><span class="lesson-icon">★</span><span class="lesson-number">B</span><h3>Um grande sucesso surpreende o modelo.</h3><p id="hit-copy"></p></article><article><span class="lesson-icon">?</span><span class="lesson-number">C</span><h3>Faltam peças importantes do negócio.</h3><p>Marketing, investimento e força da franquia não estão nos dados. Use a estimativa para explorar padrões, nunca como meta de vendas ou decisão de investimento.</p></article></div>
       <details class="method"><summary>Como conferimos se o modelo funciona? <span>+</span></summary><div class="method-body"><p>Primeiro, reservamos um grupo de jogos que o modelo não viu enquanto aprendia. Comparamos várias formas de fazer a conta usando apenas os outros jogos e escolhemos a que equilibrava resultado e simplicidade. Só então conferimos a escolhida no grupo reservado.</p><p id="method-copy"></p><p>Também verificamos se características parecidas carregam informação repetida. As notas da crítica e do público, por exemplo, tendem a andar juntas. Por isso, as barras da experiência mostram partes do cálculo, não causas independentes.</p></div></details>
     </section>
   </main>
@@ -365,9 +365,9 @@ function showDrivers(effects, scenario = false) {
     const empty = document.createElement("p"); empty.textContent = scenario ? "Essa mudança quase não alterou a estimativa." : "Escolha um jogo para ver o que mais pesou na estimativa."; container.append(empty); return;
   }
   const scale = document.createElement("div"); scale.className = "drivers-scale"; scale.setAttribute("aria-hidden", "true");
-  const scaleDown = document.createElement("span"); scaleDown.textContent = "REDUZ O PALPITE";
+  const scaleDown = document.createElement("span"); scaleDown.textContent = "REDUZ A PREVISÃO";
   const scaleCenter = document.createElement("b"); scaleCenter.textContent = scenario ? "SEM A MUDANÇA" : "JOGO TÍPICO";
-  const scaleUp = document.createElement("span"); scaleUp.textContent = "ELEVA O PALPITE";
+  const scaleUp = document.createElement("span"); scaleUp.textContent = "ELEVA A PREVISÃO";
   scale.append(scaleDown, scaleCenter, scaleUp); container.append(scale);
 
   const maxEffect = Math.max(...biggest.map(([,value]) => Math.abs(value)), .01);
@@ -386,14 +386,14 @@ function showDrivers(effects, scenario = false) {
     bar.style.width = `${Math.max(4, Math.abs(effect) / maxEffect * 100)}%`;
     (effect >= 0 ? upSide : downSide).append(bar); chart.append(downSide, upSide);
 
-    const description = document.createElement("small"); description.textContent = scenario ? (effect >= 0 ? "A mudança elevou o palpite" : "A mudança reduziu o palpite") : (effect >= 0 ? "Elevou o palpite frente a um jogo típico" : "Reduziu o palpite frente a um jogo típico");
+    const description = document.createElement("small"); description.textContent = scenario ? (effect >= 0 ? "A mudança elevou a previsão" : "A mudança reduziu a previsão") : (effect >= 0 ? "Elevou a previsão frente a um jogo típico" : "Reduziu a previsão frente a um jogo típico");
     row.append(head, chart, description); container.append(row);
   }
 
   const [mainField, mainEffect] = biggest[0];
   const story = document.createElement("p"); story.className = "driver-story";
   story.textContent = scenario
-    ? `${labels[mainField]} foi a mudança que mais mexeu no resultado, puxando o novo palpite ${mainEffect >= 0 ? "para cima" : "para baixo"}.`
+    ? `${labels[mainField]} foi a mudança que mais mexeu no resultado, puxando a nova previsão ${mainEffect >= 0 ? "para cima" : "para baixo"}.`
     : `${labels[mainField]} foi o fator com maior peso neste caso, puxando a estimativa ${mainEffect >= 0 ? "para cima" : "para baixo"} em relação a um jogo típico.`;
   container.append(story);
 }
@@ -419,7 +419,7 @@ function updateScenarioMonitor(result, game, sourceGame) {
   byId("scenario-delta").textContent = `${delta > 0 ? "+" : delta < 0 ? "−" : ""}${pt(Math.abs(delta))} mi`;
   byId("scenario-delta").className = delta > 0 ? "up" : delta < 0 ? "down" : "";
   byId("scenario-monitor-story").textContent = sourceGame
-    ? `Com as alterações, o palpite ficou ${pt(Math.abs(delta))} ${Math.abs(delta) === 1 ? "milhão" : "milhões"} ${delta > 0 ? "acima" : delta < 0 ? "abaixo" : "igual ao"} original.`
+    ? `Com as alterações, a previsão ficou ${pt(Math.abs(delta))} ${Math.abs(delta) === 1 ? "milhão" : "milhões"} ${delta > 0 ? "acima da" : delta < 0 ? "abaixo da" : "igual à"} previsão original.`
     : "Este é o ponto de partida. Altere um campo para comparar o efeito imediatamente.";
 }
 
@@ -469,15 +469,15 @@ function update() {
     const deltas = Object.fromEntries(fields.map(field => [field, result.contributions[field] - original.contributions[field]]));
     showDrivers(deltas, true);
     byId("explain-step").textContent = "02 / IMPACTO DA MUDANÇA";
-    byId("explain-title").textContent = "O que mudou no palpite?";
+    byId("explain-title").textContent = "O que mudou na previsão?";
     byId("explain-intro").textContent = "Cada linha mostra quanto uma alteração deslocou a estimativa, mantendo os outros dados do jogo.";
     const change = result.clipped - original.clipped;
     scenarioStory.textContent = changes.length
-      ? `Você mudou ${changes.map(field => labels[field]).join(", ")}. O palpite passou de ${pt(original.clipped)} para ${pt(result.clipped)} milhões${change === 0 ? "." : ` (${change > 0 ? "+" : "−"}${pt(Math.abs(change))} milhões).`}`
+      ? `Você mudou ${changes.map(field => labels[field]).join(", ")}. A previsão passou de ${pt(original.clipped)} para ${pt(result.clipped)} milhões${change === 0 ? "." : ` (${change > 0 ? "+" : "−"}${pt(Math.abs(change))} milhões).`}`
       : "Os dados continuam iguais aos do jogo selecionado. Mude uma variável abaixo para testar uma hipótese.";
     scenarioStory.hidden = false;
   } else {
-    byId("explain-step").textContent = "01 / POR TRÁS DO PALPITE";
+    byId("explain-step").textContent = "01 / POR TRÁS DA PREVISÃO";
     byId("explain-title").textContent = "O que mais pesou?";
     byId("explain-intro").textContent = "Veja quais informações mais afastam a estimativa de um jogo típico.";
     showDrivers(result.contributions);
@@ -490,7 +490,7 @@ function update() {
     const max = Math.max(comparisonGame.actual, result.clipped, .01);
     byId("pred-bar").style.width = `${Math.max(1, result.clipped / max * 100)}%`;
     byId("actual-bar").style.width = `${Math.max(1, comparisonGame.actual / max * 100)}%`;
-    byId("pred-caption").textContent = sourceGame ? "NOVO PALPITE" : "ESTIMATIVA";
+    byId("pred-caption").textContent = sourceGame ? "NOVA PREVISÃO" : "ESTIMATIVA";
     byId("pred-label").textContent = `${pt(result.clipped)} mi`;
     byId("actual-label").textContent = `${pt(comparisonGame.actual)} mi`;
     byId("comparison").hidden = false;
